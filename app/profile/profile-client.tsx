@@ -28,7 +28,7 @@ type ProfileData = {
   }>;
 };
 
-export default function ProfileClient({ suggestedName, signOutPath }: { suggestedName: string; signOutPath: string }) {
+export default function ProfileClient({ suggestedName, signOutPath, isAdmin }: { suggestedName: string; signOutPath: string; isAdmin: boolean }) {
   const [data, setData] = useState<ProfileData | null>(null);
   const [name, setName] = useState(suggestedName);
   const [status, setStatus] = useState("Loading your private profile…");
@@ -91,7 +91,7 @@ export default function ProfileClient({ suggestedName, signOutPath }: { suggeste
     <main className="profile-shell">
       <nav className="topbar profile-nav">
         <Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link>
-        <div className="profile-nav-actions"><Link href="/feedback">Feedback</Link><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
+        <div className="profile-nav-actions">{isAdmin && <Link href="/admin/feedback">Feedback inbox</Link>}<Link href="/feedback">Feedback</Link><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
       </nav>
 
       <section className="profile-heading">

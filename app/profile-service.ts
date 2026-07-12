@@ -7,6 +7,7 @@ const DAY = 24 * 60 * 60 * 1000;
 const ABANDONED_SESSION_RETENTION = 7 * DAY;
 const FEEDBACK_RETENTION = 365 * DAY;
 const FEEDBACK_CATEGORIES = new Set(["gameplay", "difficulty", "metadata", "copyright", "accessibility", "bug", "privacy", "other"]);
+const FEEDBACK_STATUSES = new Set(["new", "reviewing", "resolved"]);
 
 type D1Result<T> = { results?: T[]; success: boolean };
 type D1Statement = {
@@ -52,6 +53,18 @@ export async function requireIdentity(): Promise<Identity> {
     userKey: await hmacHex(secret, user.email.trim().toLowerCase()),
     suggestedName: cleanDisplayName(user.fullName ?? "Researcher"),
   };
+}
+
+export function isAdminEmail(email: string) {
+  const configuredEmail = getEnvironment().ADMIN_EMAIL?.trim().toLowerCase();
+  return Boolean(configuredEmail && email.trim().toLowerCase() === configuredEmail);
+}
+
+export async function requireAdmin() {
+  const user = await getChatGPTUser();
+  if (!user) throw new ApiError(401, "Sign in with ChatGPT to continue.");
+  if (!isAdminEmail(user.email)) throw new ApiError(404, "Not found.");
+  return user;
 }
 
 export async function ensureProfile(identity: Identity) {
@@ -245,6 +258,40 @@ export async function submitFeedback(identity: Identity, body: unknown) {
   return { id, received: true, retentionDays: 365 };
 }
 
+export async function listFeedback() {
+  await requireAdmin();
+  const rows = await getDatabase().prepare(`
+    SELECT f.id, f.collection_id AS collectionId, f.paper_id AS paperId,
+      f.category, f.message, f.rating, f.created_at AS createdAt, f.status,
+      p.display_name AS displayName
+    FROM feedback f
+    INNER JOIN profiles p ON p.user_key = f.user_key
+    ORDER BY f.created_at DESC
+    LIMIT 500
+  `).all<Record<string, unknown>>();
+  const titles = new Map(playablePapers.map((paper) => [paper.id, paper.title]));
+  return {
+    feedback: (rows.results ?? []).map((item) => ({
+      ...item,
+      paperTitle: typeof item.paperId === "string" ? titles.get(item.paperId) ?? item.paperId : null,
+    })),
+    collection: { id: collection.id, label: collection.label },
+  };
+}
+
+export async function updateFeedbackStatus(id: string, status: unknown) {
+  await requireAdmin();
+  if (!id || id.length > 100) throw new ApiError(400, "A valid feedback ID is required.");
+  if (typeof status !== "string" || !FEEDBACK_STATUSES.has(status)) {
+    throw new ApiError(400, "Choose a valid feedback status.");
+  }
+  const db = getDatabase();
+  await db.prepare("UPDATE feedback SET status = ? WHERE id = ?").bind(status, id).run();
+  const updated = await db.prepare("SELECT id, status FROM feedback WHERE id = ?").bind(id).first<{ id: string; status: string }>();
+  if (!updated) throw new ApiError(404, "Feedback entry not found.");
+  return updated;
+}
+
 async function enforceRateLimit(identity: Identity, action: string, limit: number, windowMs: number) {
   const db = getDatabase();
   const windowStart = Math.floor(Date.now() / windowMs) * windowMs;
@@ -330,7 +377,7 @@ async function hmacHex(secret: string, value: string) {
 }
 
 function getEnvironment() {
-  return env as unknown as { DB?: D1Database; PROFILE_ID_SECRET?: string };
+  return env as unknown as { DB?: D1Database; PROFILE_ID_SECRET?: string; ADMIN_EMAIL?: string };
 }
 
 function getDatabase() {

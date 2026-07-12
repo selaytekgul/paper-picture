@@ -31,6 +31,8 @@
 ## Monitoring and incident response
 
 - Application errors are emitted as structured events without raw email addresses or submitted feedback text.
+- The configured owner can review, filter, resolve, and export submitted feedback at `/admin/feedback`. This route and its API return 404 for signed-in non-admin users.
+- A lightweight release check is available at `/api/health`; it exposes collection counts only and never queries player data.
 - Investigate repeated 429 responses, 5xx responses, failed migrations, incomplete deployments, and rights/takedown feedback.
 - For a copyright or privacy report, temporarily remove the affected paper or return the site to owner-only while reviewing evidence.
 - Never paste production database rows, identity secrets, source credentials, or private feedback into public issues.
@@ -42,3 +44,9 @@
 - Rights evidence hashes match all shipped figures.
 - Desktop, mobile, keyboard, correct-answer, incorrect-answer, reveal, assisted, save, feedback, retention, and delete paths pass.
 - The production deployment remains private until tester access is explicitly configured.
+
+## Domain launch
+
+1. Buy the domain, but wait to add DNS records until Sites supplies the exact validation and routing records.
+2. Choose the final hostname (for example, `play.example.org`) and the access audience: public, selected testers, or workspace members.
+3. Follow `DOMAIN_SETUP.md` to attach the hostname, configure DNS, verify TLS, and run the domain acceptance pass.

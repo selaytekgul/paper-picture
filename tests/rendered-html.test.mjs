@@ -49,8 +49,45 @@ test("profiles are private, keyed, server-scored, and deletable", async () => {
   assert.match(service, /Too many requests/);
   assert.match(profile, /Delete all my data/);
   assert.match(privacy, /do not store your raw sign-in email or ChatGPT access tokens/);
+  assert.match(privacy, /available to the project owner for review/);
   assert.match(worker, /Content-Security-Policy/);
   assert.match(worker, /X-Content-Type-Options/);
+  assert.match(worker, /Strict-Transport-Security/);
+});
+
+test("owner feedback inbox is protected, actionable, and exportable", async () => {
+  const [service, page, client, listRoute, updateRoute, profilePage] = await Promise.all([
+    readFile(new URL("../app/profile-service.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/feedback/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/feedback/feedback-admin-client.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/feedback/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/feedback/[id]/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/profile/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(service, /ADMIN_EMAIL/);
+  assert.match(service, /await requireAdmin\(\)/);
+  assert.match(service, /FEEDBACK_STATUSES/);
+  assert.match(service, /INNER JOIN profiles/);
+  assert.match(service, /LIMIT 500/);
+  const listFeedback = service.match(/export async function listFeedback[\s\S]*?\n}\n/)?.[0] ?? "";
+  assert.doesNotMatch(listFeedback, /AS userKey|AS email|SELECT[^`]*email/i);
+  assert.match(page, /notFound\(\)/);
+  assert.match(listRoute, /listFeedback/);
+  assert.match(updateRoute, /updateFeedbackStatus/);
+  assert.match(client, /Download CSV/);
+  assert.match(client, /paper-picture-feedback-/);
+  assert.match(client, /All statuses/);
+  assert.match(client, /resolved/);
+  assert.match(profilePage, /isAdminEmail/);
+});
+
+test("health endpoint reports the immutable collection without player data", async () => {
+  const health = await readFile(new URL("../app/api/health/route.ts", import.meta.url), "utf8");
+  assert.match(health, /status: "ok"/);
+  assert.match(health, /collectionPaperCount/);
+  assert.match(health, /collectionFigureCount/);
+  assert.match(health, /Cache-Control.*no-store/);
+  assert.doesNotMatch(health, /profile|feedback|user/i);
 });
 
 test("ships only approved paper records and all eighteen image assets", async () => {

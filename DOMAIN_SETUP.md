@@ -1,0 +1,27 @@
+# Paper Picture domain setup
+
+The application is ready to run on a custom hostname. Its navigation and API calls use relative URLs, so no source change is required when the hostname changes.
+
+## Before changing DNS
+
+1. Purchase the domain from the registrar you prefer.
+2. Decide whether the game will live at the root domain (`example.org`) or a subdomain such as `play.example.org`. A dedicated `play` subdomain is the simplest default.
+3. Decide who may enter: everyone, selected tester email addresses, or members of a workspace. Keep owner-only access during DNS setup.
+4. Send the exact hostname and audience decision to the site operator.
+
+Do not guess or pre-create DNS records. The hosting control plane supplies the required CNAME or address record and any ownership-validation record after the hostname is attached to this project.
+
+## Attachment and verification
+
+1. Add the exact hostname to the Paper Picture Sites project.
+2. Copy the returned DNS records into the registrar's DNS panel exactly.
+3. Wait for DNS validation and managed TLS certificate issuance.
+4. Confirm the custom hostname redirects to HTTPS and serves a valid certificate.
+5. Confirm `/api/health` reports `status: ok`, collection `open-graphics-01-v1`, 6 papers, and 18 figures.
+6. Sign in through the custom hostname and check a complete game, score saving, profile history, feedback submission, and the owner-only feedback inbox.
+7. Verify that an allowed tester cannot open `/admin/feedback` and that the owner can download its filtered CSV.
+8. Confirm the old hosted URL and the custom hostname do not create an authentication or redirect loop.
+
+## Release gate
+
+Open access only after the private acceptance pass succeeds, a database snapshot is recorded, and the intended audience is explicit. Keep the registrar account protected with multi-factor authentication and store recovery codes outside the repository.

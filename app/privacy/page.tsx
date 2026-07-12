@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <h2>What is stored</h2>
         <p>We store a display name, a one-way keyed identifier derived from your normalized sign-in email, collection version, randomized paper order, game timestamps, selected answer indexes, figures viewed, correctness, assisted-round status, and scores. Feedback may include its category, rating, related paper, and the text you submit. We do not store your raw sign-in email or ChatGPT access tokens in the gameplay database.</p>
         <h2>Why it is stored</h2>
-        <p>This information powers your private history and aggregate test measures such as starts, completions, accuracy, and assisted play. There is no advertising analytics or cross-site tracking. Scores are casual educational results rather than a secure competition.</p>
+        <p>This information powers your private history and aggregate test measures such as starts, completions, accuracy, and assisted play. Submitted feedback is available to the project owner for review, follow-up, and CSV export; it is not shown to other players. There is no advertising analytics or cross-site tracking. Scores are casual educational results rather than a secure competition.</p>
         <h2>Retention</h2>
         <p>Unfinished game sessions are removed after 7 days. Submitted feedback is removed after 365 days. Completed games and your display name remain until you delete the profile so your history stays available. Short-lived rate-limit counters are removed after approximately 2 days.</p>
         <h2>Your controls</h2>
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         <p>The Paper Picture project operates this test. Use the authenticated <Link href="/feedback">feedback and contact form</Link> for privacy questions, factual corrections, accessibility issues, or copyright and takedown requests. Select the relevant category so it can be triaged appropriately.</p>
         <h2>Research figures</h2>
         <p>The figures in the current collection are publisher-provided images from openly licensed research articles. Each game answer links to the paper, figure source, and license evidence.</p>
-        <p className="legal-version">Privacy notice version: 12 July 2026 · revision 2</p>
+        <p className="legal-version">Privacy notice version: 12 July 2026 · revision 3</p>
       </article>
     </main>
   );
