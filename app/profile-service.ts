@@ -1,10 +1,9 @@
 import { env } from "cloudflare:workers";
-import { playablePapers } from "../data/papers";
+import { maximumCollectionScore, playablePapers, pointsForImagesSeen } from "../data/papers";
 import { getChatGPTUser } from "./chatgpt-auth";
 
 const PRIVACY_VERSION = "2026-07-12";
 const COLLECTION_ID = "open-graphics-01";
-const SCORE_BY_IMAGES = [100, 70, 40] as const;
 
 type D1Result<T> = { results?: T[]; success: boolean };
 type D1Statement = {
@@ -140,7 +139,7 @@ export async function createGameSession(identity: Identity) {
       (id, user_key, collection_id, score_class, started_at, status, score,
        maximum_score, correct_count, round_count, figures_revealed)
     VALUES (?, ?, ?, 'casual', ?, 'started', 0, ?, 0, ?, 0)
-  `).bind(id, identity.userKey, COLLECTION_ID, now, playablePapers.length * 100, playablePapers.length).run();
+  `).bind(id, identity.userKey, COLLECTION_ID, now, maximumCollectionScore, playablePapers.length).run();
   return { id, collectionId: COLLECTION_ID, scoreClass: "casual", startedAt: now };
 }
 
@@ -162,7 +161,7 @@ export async function recordAttempt(identity: Identity, sessionId: string, body:
   const selectedOption = Number(input.selectedOption);
   const imagesSeen = Number(input.imagesSeen);
   const wasCorrect = selectedOption === paper.correct;
-  const scoreAwarded = wasCorrect ? SCORE_BY_IMAGES[imagesSeen - 1] : 0;
+  const scoreAwarded = wasCorrect ? pointsForImagesSeen(imagesSeen) : 0;
   const id = crypto.randomUUID();
   const answeredAt = Date.now();
   await db.prepare(`

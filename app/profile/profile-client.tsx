@@ -99,7 +99,7 @@ export default function ProfileClient({ suggestedName, signOutPath }: { suggeste
 
       <section className="stat-grid" aria-label="Player statistics">
         <article><span>Games played</span><strong>{data?.stats.gamesPlayed ?? "—"}</strong></article>
-        <article><span>Best score</span><strong>{data?.stats.bestScore ?? "—"}<small> / 300</small></strong></article>
+        <article><span>Best score</span><strong>{data?.stats.bestScore ?? "—"}<small> points</small></strong></article>
         <article><span>Answer accuracy</span><strong>{data ? `${data.stats.accuracy}%` : "—"}</strong></article>
         <article><span>Figures studied</span><strong>{data?.stats.figuresRevealed ?? "—"}</strong></article>
       </section>

@@ -44,6 +44,39 @@ The game stores the publisher-provided image without editing it. Responsive disp
 - Affiliation check: M. J. Wood is listed with the Department of Aerospace Engineering, University of Bristol, United Kingdom.
 - Status: approved
 
+### Be water my friend: mesh assimilation
+
+- DOI: https://doi.org/10.1007/s00371-021-02183-6
+- Publication page: https://link.springer.com/article/10.1007/s00371-021-02183-6
+- License: CC BY 4.0
+- License evidence: the Rights and permissions section states that the article and included images are CC BY 4.0 unless separately credited.
+- Figures: 1, 9, and 13
+- Caption credit check: none of the selected captions contains a separate third-party credit line. Figures with an explicit external image-source credit were excluded.
+- Affiliation check: Dennis R. Bukenberger is listed with University Tübingen, Germany.
+- Status: approved
+
+### Higher-order block-structured hex meshing of tubular structures
+
+- DOI: https://doi.org/10.1007/s00366-023-01834-7
+- Publication page: https://link.springer.com/article/10.1007/s00366-023-01834-7
+- License: CC BY 4.0
+- License evidence: the Rights and permissions section states that the article and included images are CC BY 4.0 unless separately credited.
+- Figures: 19, 20, and 21
+- Caption credit check: none of the selected captions contains a separate third-party credit line.
+- Affiliation check: Domagoj Bošnjak is listed with the Institute of Structural Analysis, Graz University of Technology, Austria.
+- Status: approved
+
+### CADGCL: unsupervised retrieval of CAD models via boundary representations
+
+- DOI: https://doi.org/10.1007/s00371-025-03949-y
+- Publication page: https://link.springer.com/article/10.1007/s00371-025-03949-y
+- License: CC BY 4.0
+- License evidence: the Rights and permissions section states that the article and included images are CC BY 4.0 unless separately credited.
+- Figures: 1, 2, and 4
+- Caption credit check: none of the selected captions contains a separate third-party credit line.
+- Affiliation check: Feiwei Qin is listed with the School of Computer Science and Technology, Hangzhou Dianzi University, China.
+- Status: approved
+
 ## Excluded source types
 
 - Default arXiv distribution licenses

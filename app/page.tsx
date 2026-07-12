@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { playablePapers, type PaperFigure } from "../data/papers";
+import { collectionFigureCount, collectionPaperCount, maximumCollectionScore, playablePapers, pointsForImagesSeen, type PaperFigure } from "../data/papers";
 
 function FigureView({ figure, index }: { figure: PaperFigure; index: number }) {
   return (
@@ -29,7 +29,7 @@ export default function Home() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "connecting" | "saving" | "saved" | "unsaved">("idle");
   const paper = playablePapers[round];
-  const potential = [100, 70, 40][reveal];
+  const potential = pointsForImagesSeen(reveal + 1);
   const progress = useMemo(() => ((round + (selected !== null ? 1 : 0)) / playablePapers.length) * 100, [round, selected]);
 
   async function startGame() {
@@ -111,7 +111,7 @@ export default function Home() {
             <p>Study a real, openly licensed research figure. Guess the institution or country. Reveal a second figure when you need it—but every clue costs points.</p>
             <div className="hero-actions">
               <button className="primary-button" onClick={startGame}>Play the real collection <span>→</span></button>
-              <span className="time-note">3 verified papers · 3 figures each</span>
+              <span className="time-note">{collectionPaperCount} verified papers · {collectionFigureCount} licensed figures</span>
             </div>
           </div>
           <div className="hero-specimen">
@@ -128,10 +128,10 @@ export default function Home() {
         <section className="collection-note" id="method">
           <div className="eyebrow"><span /> Collection policy</div>
           <h2>Real papers. Traceable figures.</h2>
-          <p>This first collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless a separate credit says otherwise. The selected captions contain no separate third-party credit. All nine images are publisher-provided originals and are resized only by the browser.</p>
+          <p>This first collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless a separate credit says otherwise. The selected captions contain no separate third-party credit. All {collectionFigureCount} images are publisher-provided originals and are resized only by the browser.</p>
           <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Read the CC BY 4.0 license ↗</a>
         </section>
-        <footer className="landing-footer"><span>Open Graphics Collection 01</span><span>3 papers · 9 source-traceable figures</span><a href="/privacy">Privacy & data</a></footer>
+        <footer className="landing-footer"><span>Open Graphics Collection 01</span><span>{collectionPaperCount} papers · {collectionFigureCount} source-traceable figures</span><a href="/privacy">Privacy & data</a></footer>
       </main>
     );
   }
@@ -141,9 +141,9 @@ export default function Home() {
       <main className="result-shell">
         <div className="result-card">
           <div className="eyebrow"><span /> Collection complete</div>
-          <div className="score-orbit"><strong>{score}</strong><span>/ 300</span></div>
+          <div className="score-orbit"><strong>{score}</strong><span>/ {maximumCollectionScore}</span></div>
           <h1>You followed the visual evidence.</h1>
-          <p>You explored three real CC BY research papers across geometry processing, adaptive meshing, and geometric optimization.</p>
+          <p>You explored {collectionPaperCount} real CC BY research papers across geometry processing, meshing, CAD retrieval, and geometric optimization.</p>
           <p className={`save-message ${saveState === "saved" ? "is-saved" : "is-unsaved"}`}>{saveState === "saved" ? "✓ This game is saved to your private profile." : "This score was not saved. You can still play normally."}</p>
           <div className="result-actions"><button className="primary-button" onClick={startGame}>Play again <span>↻</span></button><a className="secondary-button" href="/profile">View my profile</a></div>
           <button className="text-button" onClick={() => { setStarted(false); setComplete(false); }}>Back to collection</button>
