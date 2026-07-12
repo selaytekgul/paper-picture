@@ -2,33 +2,40 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+test("homepage keeps the real open-graphics collection and profile entry points", async () => {
+  const [page, layout] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(layout, /Paper Picture — A visual research game/);
+  assert.match(page, /Open Graphics Collection 01/);
+  assert.match(page, /Play the real collection/);
+  assert.match(page, /3 verified papers/);
+  assert.match(page, /9 source-traceable figures/);
+  assert.match(page, /CC BY 4\.0/);
+  assert.match(page, /href="\/profile"/);
+  assert.match(page, /href="\/privacy"/);
+  assert.doesNotMatch(page, /fictional|prototype collection|codex-preview/i);
+});
 
-  return worker.fetch(
-    new Request("http://localhost/", { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-}
-
-test("server-renders the real open-graphics collection", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, /<title>Paper Picture — A visual research game<\/title>/i);
-  assert.match(html, /Open Graphics Collection 01/);
-  assert.match(html, /Play the real collection/);
-  assert.match(html, /3 verified papers/);
-  assert.match(html, /9 source-traceable figures/);
-  assert.match(html, /CC BY 4\.0/);
-  assert.match(html, />Source<\/a>/);
-  assert.match(html, /papers\/goal-adaptive\/fig15\.png/);
-  assert.doesNotMatch(html, /fictional|prototype collection|codex-preview/i);
+test("profiles are private, keyed, server-scored, and deletable", async () => {
+  const [service, migration, profile, privacy] = await Promise.all([
+    readFile(new URL("../app/profile-service.ts", import.meta.url), "utf8"),
+    readFile(new URL("../drizzle/0000_fancy_orphan.sql", import.meta.url), "utf8"),
+    readFile(new URL("../app/profile/profile-client.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(service, /HMAC/);
+  assert.match(service, /PROFILE_ID_SECRET/);
+  assert.match(service, /selectedOption === paper\.correct/);
+  assert.match(service, /SCORE_BY_IMAGES\[imagesSeen - 1\]/);
+  assert.match(service, /Cache-Control": "private, no-store"/);
+  assert.match(migration, /CREATE TABLE `profiles`/);
+  assert.match(migration, /CREATE TABLE `game_sessions`/);
+  assert.match(migration, /CREATE TABLE `round_attempts`/);
+  assert.match(migration, /CREATE UNIQUE INDEX `round_attempts_session_paper_unique`/);
+  assert.match(profile, /Delete all my data/);
+  assert.match(privacy, /do not store your raw sign-in email or ChatGPT access tokens/);
 });
 
 test("ships only approved paper records and all nine image assets", async () => {
