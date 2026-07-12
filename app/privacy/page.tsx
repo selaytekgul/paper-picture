@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Privacy & data — Paper Picture",
+  description: "How Paper Picture stores game progress, profiles, and feedback.",
+  alternates: { canonical: "/privacy" },
+  openGraph: { url: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (

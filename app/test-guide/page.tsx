@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { collection, collectionFigureCount, collectionPaperCount, maximumCollectionScore } from "../../data/papers";
+
+export const metadata: Metadata = {
+  title: "Tester guide — Paper Picture",
+  description: "How to play, score, and give useful feedback on Paper Picture.",
+  alternates: { canonical: "/test-guide" },
+  openGraph: { url: "/test-guide" },
+};
 
 export default function TestGuidePage() {
   return (

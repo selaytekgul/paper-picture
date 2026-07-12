@@ -2,11 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://paperpicture.net"),
   title: "Paper Picture — A visual research game",
   description: "Guess the institution behind a computer graphics paper from its figures.",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Paper Picture",
     description: "Can you read a paper by its pictures?",
+    url: "/",
+    siteName: "Paper Picture",
+    type: "website",
     images: [{ url: "/og.png", width: 1733, height: 909, alt: "Paper Picture visual research game" }],
   },
   twitter: {
