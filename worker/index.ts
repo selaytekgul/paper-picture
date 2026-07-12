@@ -40,7 +40,15 @@ const worker = {
       }, allowedWidths);
     }
 
-    return handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, env, ctx);
+    const secured = new Response(response.body, response);
+    secured.headers.set("X-Content-Type-Options", "nosniff");
+    secured.headers.set("X-Frame-Options", "DENY");
+    secured.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    secured.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+    secured.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    secured.headers.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https://media.springernature.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+    return secured;
   },
 };
 

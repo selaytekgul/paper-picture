@@ -12,6 +12,7 @@ type ProfileData = {
     totalAnswers: number;
     accuracy: number;
     figuresRevealed: number;
+    assistedAnswers: number;
   };
   recent: Array<{
     id: string;
@@ -20,6 +21,9 @@ type ProfileData = {
     correctCount: number;
     roundCount: number;
     figuresRevealed: number;
+    assistedCount: number;
+    scoreClass: "casual" | "assisted";
+    collectionLabel: string;
     completedAt: number;
   }>;
 };
@@ -87,7 +91,7 @@ export default function ProfileClient({ suggestedName, signOutPath }: { suggeste
     <main className="profile-shell">
       <nav className="topbar profile-nav">
         <Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link>
-        <div className="profile-nav-actions"><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
+        <div className="profile-nav-actions"><Link href="/feedback">Feedback</Link><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
       </nav>
 
       <section className="profile-heading">
@@ -108,13 +112,13 @@ export default function ProfileClient({ suggestedName, signOutPath }: { suggeste
         <div className="section-title"><div><div className="eyebrow"><span /> Recent activity</div><h2>Saved games</h2></div><Link className="primary-button" href="/">Play a new game <span>→</span></Link></div>
         {!data ? <p className="empty-history">Your game history is loading.</p> : data.recent.length === 0 ? <p className="empty-history">No completed games yet. Finish the collection and your score will appear here.</p> : (
           <div className="history-list">
-            {data.recent.map((game) => <article key={game.id}><div><b>{new Date(game.completedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}</b><span>Open Graphics Collection 01</span></div><div><span>{game.correctCount}/{game.roundCount} correct</span><span>{game.figuresRevealed} figures</span><strong>{game.score}<small> / {game.maximumScore}</small></strong></div></article>)}
+            {data.recent.map((game) => <article key={game.id}><div><b>{new Date(game.completedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}</b><span>{game.collectionLabel}</span></div><div><span className={`history-class ${game.scoreClass}`}>{game.scoreClass}{game.assistedCount ? ` · ${game.assistedCount}` : ""}</span><span>{game.correctCount}/{game.roundCount} correct</span><span>{game.figuresRevealed} figures</span><strong>{game.score}<small> / {game.maximumScore}</small></strong></div></article>)}
           </div>
         )}
       </section>
 
-      <section className="danger-zone"><div><h2>Delete profile</h2><p>Erase your display name, game history, and round attempts permanently.</p></div><button onClick={eraseProfile} disabled={deleting}>{deleting ? "Deleting…" : "Delete all my data"}</button></section>
-      <footer className="profile-footer"><span>Private by default · Casual scores</span><Link href="/privacy">Privacy & data</Link></footer>
+      <section className="danger-zone"><div><h2>Delete profile</h2><p>Erase your display name, game history, attempts, feedback, and request counters permanently.</p></div><button onClick={eraseProfile} disabled={deleting}>{deleting ? "Deleting…" : "Delete all my data"}</button></section>
+      <footer className="profile-footer"><span>Private by default · Casual and assisted scores</span><span><Link href="/feedback">Contact</Link> · <Link href="/privacy">Privacy & data</Link></span></footer>
     </main>
   );
 }

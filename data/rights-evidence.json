@@ -1,0 +1,76 @@
+{
+  "collectionId": "open-graphics-01-v1",
+  "collectionVersion": "1.0",
+  "verifiedAt": "2026-07-12",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "method": "Each publication page was checked for an explicit CC BY 4.0 rights statement. Selected captions were checked for separate third-party credits. SHA-256 identifies the unmodified local publisher asset.",
+  "papers": [
+    {
+      "id": "goal-adaptive-meshing",
+      "doi": "10.1007/s00366-024-01958-4",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-024-01958-4",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-024-01958-4#rightslink",
+      "figures": [
+        { "number": 11, "path": "public/papers/goal-adaptive/fig11.png", "sha256": "55cb7d0e3a8a70180c62ca2c31a57ab1d473438cc4b01f19588f11e5e62c0160" },
+        { "number": 15, "path": "public/papers/goal-adaptive/fig15.png", "sha256": "bb45e79fb835d87dc5f8a12f142d34e366a3c34a865a7d93880bf9daa84eb1b8" },
+        { "number": 13, "path": "public/papers/goal-adaptive/fig13.jpg", "sha256": "e34c77f9dcbb751f12df974af34812a17d2c85bd69a17822061f1687c965c893" }
+      ]
+    },
+    {
+      "id": "functional-maps-morphing",
+      "doi": "10.1007/s00366-025-02243-8",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-025-02243-8",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-025-02243-8#rightslink",
+      "figures": [
+        { "number": 3, "path": "public/papers/functional-maps/fig3.png", "sha256": "8cdc4bc18fdae2bcdf02a0e5e040d91ee332b14cfa2e3d3c9bdeebc6b809ecc4" },
+        { "number": 6, "path": "public/papers/functional-maps/fig6.png", "sha256": "8c9f7751e7fed07e01a4b643d8d95419894e1d704140c975556891807661d58e" },
+        { "number": 4, "path": "public/papers/functional-maps/fig4.png", "sha256": "8f8cd5e524d7a64a55343ec7b99622900a2a2da206034ab0fbe79b3397071395" }
+      ]
+    },
+    {
+      "id": "topology-aerodynamic",
+      "doi": "10.1007/s00158-024-03916-6",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00158-024-03916-6",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00158-024-03916-6#rightslink",
+      "figures": [
+        { "number": 2, "path": "public/papers/topology-aero/fig2.png", "sha256": "4397937d81358d06fb848ac6b04630279cf49f7efb6d64461ff8ba604d44b996" },
+        { "number": 28, "path": "public/papers/topology-aero/fig28.png", "sha256": "609aa47cc90ee1d3b65d7bba9bd9cafa4709b0521df18950e4cad89ba6522810" },
+        { "number": 26, "path": "public/papers/topology-aero/fig26.png", "sha256": "463695c8d6c20c4a6bc1abc5214d432e3e2d2b755ecce5ed567d82bf67cc0047" }
+      ]
+    },
+    {
+      "id": "mesh-assimilation",
+      "doi": "10.1007/s00371-021-02183-6",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00371-021-02183-6",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00371-021-02183-6#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/mesh-assimilation/fig1.jpg", "sha256": "dab949db134046ea3fd48b63437e50efc308ed4c1bf39f8c0af44ef50eb00319" },
+        { "number": 9, "path": "public/papers/mesh-assimilation/fig9.png", "sha256": "08e04625ab7237b1cf16fb0ae3b6cfd677305a586e40552199817e4c346702a4" },
+        { "number": 13, "path": "public/papers/mesh-assimilation/fig13.png", "sha256": "71050a9ab96b43140a7c6c6b32b8a7a28e91c145149c35dd1699d138fa977f8b" }
+      ]
+    },
+    {
+      "id": "tubular-hex-meshing",
+      "doi": "10.1007/s00366-023-01834-7",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-023-01834-7",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-023-01834-7#rightslink",
+      "figures": [
+        { "number": 19, "path": "public/papers/tubular-hex/fig19.png", "sha256": "58314cac6222df856f7a3aae6a0d2326a64583f3da2072c4e81eb653689cf4d8" },
+        { "number": 20, "path": "public/papers/tubular-hex/fig20.png", "sha256": "5695e64a4a467acd3386c5f2c641227ad9dd0fcd83ecc2c19b1df70dff44e1fb" },
+        { "number": 21, "path": "public/papers/tubular-hex/fig21.png", "sha256": "129b657898420177f254fa96e7678176e657ed6547575adb04e0857edbc7ceb9" }
+      ]
+    },
+    {
+      "id": "cadgcl-retrieval",
+      "doi": "10.1007/s00371-025-03949-y",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00371-025-03949-y",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00371-025-03949-y#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/cadgcl/fig1.png", "sha256": "e88d39f38e18a6353bd57a8b6ec9b001ff24f42f6aab61576eb212f7f628ebac" },
+        { "number": 2, "path": "public/papers/cadgcl/fig2.png", "sha256": "bf9a8847ee473bf38a003e614fb59aa5bf9a7e2911ccf0fd4a1cd5d385d78277" },
+        { "number": 4, "path": "public/papers/cadgcl/fig4.png", "sha256": "68da1739a595959f24d98b525f70df5fd3879a90f37ea27f45d98b08129c92e9" }
+      ]
+    }
+  ]
+}

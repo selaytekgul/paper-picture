@@ -32,6 +32,15 @@ export type Paper = {
 
 const ccBy = "https://creativecommons.org/licenses/by/4.0/";
 
+export const collection = {
+  id: "open-graphics-01-v1",
+  legacyId: "open-graphics-01",
+  title: "Open Graphics Collection 01",
+  version: "1.0",
+  label: "Open Graphics Collection 01 · v1.0",
+  frozenAt: "2026-07-12",
+} as const;
+
 export const papers: Paper[] = [
   {
     id: "goal-adaptive-meshing",
@@ -46,8 +55,8 @@ export const papers: Paper[] = [
     question: "Which university lists H. M. Verhelst as an affiliated author?",
     institution: "Delft University of Technology",
     country: "The Netherlands",
-    options: ["Delft University of Technology", "Eindhoven University of Technology", "KU Leuven", "ETH Zürich"],
-    correct: 0,
+    options: ["KU Leuven", "ETH Zürich", "Eindhoven University of Technology", "Delft University of Technology"],
+    correct: 3,
     rightsStatus: "approved",
     licenseEvidenceUrl: "https://link.springer.com/article/10.1007/s00366-024-01958-4#rightslink",
     figures: [
@@ -99,8 +108,8 @@ export const papers: Paper[] = [
     question: "In which country is Amelia Ferhat’s first listed affiliation located?",
     institution: "MINES ParisTech, PSL University",
     country: "France",
-    options: ["France", "Germany", "Italy", "Belgium"],
-    correct: 0,
+    options: ["Germany", "Belgium", "France", "Italy"],
+    correct: 2,
     rightsStatus: "approved",
     licenseEvidenceUrl: "https://link.springer.com/article/10.1007/s00366-025-02243-8#rightslink",
     figures: [
@@ -152,8 +161,8 @@ export const papers: Paper[] = [
     question: "Which university lists M. J. Wood as an affiliated author?",
     institution: "University of Bristol",
     country: "United Kingdom",
-    options: ["University of Bristol", "University of Southampton", "Cranfield University", "University of Cambridge"],
-    correct: 0,
+    options: ["University of Cambridge", "University of Bristol", "University of Southampton", "Cranfield University"],
+    correct: 1,
     rightsStatus: "approved",
     licenseEvidenceUrl: "https://link.springer.com/article/10.1007/s00158-024-03916-6#rightslink",
     figures: [
@@ -205,8 +214,8 @@ export const papers: Paper[] = [
     question: "In which country is Dennis R. Bukenberger’s listed university located?",
     institution: "University of Tübingen",
     country: "Germany",
-    options: ["Austria", "Germany", "Switzerland", "The Netherlands"],
-    correct: 1,
+    options: ["Germany", "Austria", "Switzerland", "The Netherlands"],
+    correct: 0,
     rightsStatus: "approved",
     licenseEvidenceUrl: "https://link.springer.com/article/10.1007/s00371-021-02183-6#rightslink",
     figures: [
@@ -258,8 +267,8 @@ export const papers: Paper[] = [
     question: "Which university lists Domagoj Bošnjak as an affiliated author?",
     institution: "Graz University of Technology",
     country: "Austria",
-    options: ["University of Augsburg", "Graz University of Technology", "TU Wien", "ETH Zürich"],
-    correct: 1,
+    options: ["University of Augsburg", "TU Wien", "ETH Zürich", "Graz University of Technology"],
+    correct: 3,
     rightsStatus: "approved",
     licenseEvidenceUrl: "https://link.springer.com/article/10.1007/s00366-023-01834-7#rightslink",
     figures: [
@@ -361,3 +370,7 @@ export const collectionPaperCount = playablePapers.length;
 export const collectionFigureCount = playablePapers.reduce((total, paper) => total + paper.figures.length, 0);
 export const maximumCollectionScore = collectionPaperCount * 100;
 export const pointsForImagesSeen = (imagesSeen: number) => Math.max(10, 100 - (Math.max(1, imagesSeen) - 1) * 30);
+
+export function collectionLabel(collectionId: string) {
+  return collectionId === collection.id ? collection.label : collectionId === collection.legacyId ? "Open Graphics Collection 01 · legacy" : collectionId;
+}

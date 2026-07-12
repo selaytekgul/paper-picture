@@ -2,6 +2,10 @@
 
 Reviewed: 12 July 2026
 
+Frozen collection: `open-graphics-01-v1`, version `1.0`
+
+Machine-readable evidence, original asset paths, and SHA-256 checksums are archived in `data/rights-evidence.json`.
+
 ## Inclusion rule
 
 An item is playable only when its article page explicitly states CC BY 4.0, its selected figure carries no separate exclusion or third-party credit, its publication metadata and author affiliation are verified on the publication page, and its attribution record is complete in `data/papers.ts`.
