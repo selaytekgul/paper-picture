@@ -24,28 +24,32 @@ test("server-renders the real open-graphics collection", async () => {
   assert.match(html, /Open Graphics Collection 01/);
   assert.match(html, /Play the real collection/);
   assert.match(html, /3 verified papers/);
+  assert.match(html, /9 source-traceable figures/);
   assert.match(html, /CC BY 4\.0/);
   assert.match(html, />Source<\/a>/);
   assert.match(html, /papers\/goal-adaptive\/fig15\.png/);
   assert.doesNotMatch(html, /fictional|prototype collection|codex-preview/i);
 });
 
-test("ships only approved paper records and all six image assets", async () => {
+test("ships only approved paper records and all nine image assets", async () => {
   const data = await readFile(new URL("../data/papers.ts", import.meta.url), "utf8");
   assert.match(data, /id: "goal-adaptive-meshing"/);
   assert.match(data, /id: "functional-maps-morphing"/);
   assert.match(data, /id: "topology-aerodynamic"/);
-  assert.equal((data.match(/licenseUrl: ccBy/g) ?? []).length, 6);
-  assert.equal((data.match(/src: "\/papers\//g) ?? []).length, 6);
+  assert.equal((data.match(/licenseUrl: ccBy/g) ?? []).length, 9);
+  assert.equal((data.match(/src: "\/papers\//g) ?? []).length, 9);
   assert.match(data, /paper\.figures\.every\(\(figure\) => figure\.rightsStatus === "approved"\)/);
   assert.doesNotMatch(data, /Northbridge|Bellweather|Arcadia|fictional/i);
 
   await Promise.all([
     "goal-adaptive/fig11.png",
     "goal-adaptive/fig15.png",
+    "goal-adaptive/fig13.jpg",
     "functional-maps/fig3.png",
     "functional-maps/fig6.png",
+    "functional-maps/fig4.png",
     "topology-aero/fig2.png",
     "topology-aero/fig28.png",
+    "topology-aero/fig26.png",
   ].map((file) => access(new URL(`../public/papers/${file}`, import.meta.url))));
 });

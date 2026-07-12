@@ -16,7 +16,7 @@ The game stores the publisher-provided image without editing it. Responsive disp
 - Publication page: https://link.springer.com/article/10.1007/s00366-024-01958-4
 - License: CC BY 4.0
 - License evidence: the Rights and permissions section states that the article is CC BY 4.0 and included images are covered unless separately credited.
-- Figures: 11 and 15
+- Figures: 11, 15, and 13
 - Caption credit check: no separate third-party credit is attached to either selected caption.
 - Affiliation check: H. M. Verhelst is listed with Delft University of Technology, The Netherlands.
 - Status: approved
@@ -27,7 +27,7 @@ The game stores the publisher-provided image without editing it. Responsive disp
 - Publication page: https://link.springer.com/article/10.1007/s00366-025-02243-8
 - License: CC BY 4.0
 - License evidence: the Rights and permissions section states that the article is CC BY 4.0 and included images are covered unless separately credited.
-- Figures: 3 and 6
+- Figures: 3, 6, and 4
 - Caption credit check: no separate third-party credit is attached to either selected caption.
 - Authorship evidence: the Contributions section states that Amelia Ferhat generated the figures and meshes.
 - Affiliation check: Amelia Ferhat’s first listed affiliation is MINES ParisTech, PSL University, France.
@@ -39,7 +39,7 @@ The game stores the publisher-provided image without editing it. Responsive disp
 - Publication page: https://link.springer.com/article/10.1007/s00158-024-03916-6
 - License: CC BY 4.0
 - License evidence: the Rights and permissions section states that the article is CC BY 4.0 and included images are covered unless separately credited.
-- Figures: 2 and 28
+- Figures: 2, 28, and 26
 - Caption credit check: no separate third-party credit is attached to either selected caption.
 - Affiliation check: M. J. Wood is listed with the Department of Aerospace Engineering, University of Bristol, United Kingdom.
 - Status: approved

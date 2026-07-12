@@ -27,7 +27,7 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [complete, setComplete] = useState(false);
   const paper = playablePapers[round];
-  const potential = [100, 60][reveal];
+  const potential = [100, 70, 40][reveal];
   const progress = useMemo(() => ((round + (selected !== null ? 1 : 0)) / playablePapers.length) * 100, [round, selected]);
 
   function choose(index: number) {
@@ -73,7 +73,7 @@ export default function Home() {
             <p>Study a real, openly licensed research figure. Guess the institution or country. Reveal a second figure when you need it—but every clue costs points.</p>
             <div className="hero-actions">
               <button className="primary-button" onClick={() => setStarted(true)}>Play the real collection <span>→</span></button>
-              <span className="time-note">3 verified papers · about 3 min</span>
+              <span className="time-note">3 verified papers · 3 figures each</span>
             </div>
           </div>
           <div className="hero-specimen">
@@ -90,10 +90,10 @@ export default function Home() {
         <section className="collection-note" id="method">
           <div className="eyebrow"><span /> Collection policy</div>
           <h2>Real papers. Traceable figures.</h2>
-          <p>This first collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless a separate credit says otherwise. The selected captions contain no separate third-party credit. The images are publisher-provided originals and are resized only by the browser.</p>
+          <p>This first collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless a separate credit says otherwise. The selected captions contain no separate third-party credit. All nine images are publisher-provided originals and are resized only by the browser.</p>
           <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Read the CC BY 4.0 license ↗</a>
         </section>
-        <footer className="landing-footer"><span>Open Graphics Collection 01</span><span>3 papers · 6 source-traceable figures</span></footer>
+        <footer className="landing-footer"><span>Open Graphics Collection 01</span><span>3 papers · 9 source-traceable figures</span></footer>
       </main>
     );
   }
@@ -141,7 +141,7 @@ export default function Home() {
               </div>
               <div className="hint-row">
                 <div><strong>{potential}</strong><span>points available</span></div>
-                <button disabled={reveal === paper.figures.length - 1} onClick={() => setReveal(1)}>Reveal second figure <span>−40 pts</span></button>
+                <button disabled={reveal === paper.figures.length - 1} onClick={() => setReveal((value) => Math.min(paper.figures.length - 1, value + 1))}>Reveal next figure <span>−30 pts</span></button>
               </div>
             </>
           ) : (
