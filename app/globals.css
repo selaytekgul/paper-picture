@@ -41,6 +41,9 @@ button { color:inherit; }
 .figure-badge { position:absolute; left:15px; top:15px; padding:7px 9px; background:rgba(250,248,242,.94); border:1px solid var(--ink); font:700 9px monospace; letter-spacing:.1em; }
 .paper-figure figcaption { display:flex; gap:18px; padding:11px 2px 0; color:#68736f; font:600 9px/1.45 monospace; }
 .paper-figure figcaption b { color:var(--ink); white-space:nowrap; }
+.paper-figure figcaption>span:not(.figure-credit) { flex:1; }
+.figure-credit { white-space:nowrap; }
+.figure-credit a { color:var(--green); }
 .collection-note { display:grid; grid-template-columns:.55fr 1.1fr 1.3fr .65fr; gap:35px; align-items:start; padding:52px 0; border-top:1px solid rgba(23,32,29,.25); }
 .collection-note h2 { margin:0; font:500 32px/1.05 Georgia,serif; letter-spacing:-.035em; }
 .collection-note p { margin:0; color:#5d6964; font:14px/1.65 Georgia,serif; }

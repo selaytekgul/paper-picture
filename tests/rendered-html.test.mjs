@@ -25,6 +25,7 @@ test("server-renders the real open-graphics collection", async () => {
   assert.match(html, /Play the real collection/);
   assert.match(html, /3 verified papers/);
   assert.match(html, /CC BY 4\.0/);
+  assert.match(html, />Source<\/a>/);
   assert.match(html, /papers\/goal-adaptive\/fig15\.png/);
   assert.doesNotMatch(html, /fictional|prototype collection|codex-preview/i);
 });

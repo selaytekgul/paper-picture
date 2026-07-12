@@ -10,7 +10,11 @@ function FigureView({ figure, index }: { figure: PaperFigure; index: number }) {
         <img src={figure.src} alt={figure.alt} />
         <span className="figure-badge">IMAGE {index + 1}</span>
       </div>
-      <figcaption><b>{figure.number}</b><span>{figure.caption}</span></figcaption>
+      <figcaption>
+        <b>{figure.number}</b>
+        <span>{figure.caption}</span>
+        <span className="figure-credit"><a href={figure.sourceUrl} target="_blank" rel="noreferrer">Source</a> · <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a></span>
+      </figcaption>
     </figure>
   );
 }
