@@ -1,65 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { playablePapers, type PaperFigure } from "../data/papers";
 
-type Paper = {
-  id: string;
-  title: string;
-  institution: string;
-  country: string;
-  authors: string;
-  topic: string;
-  options: string[];
-  correct: number;
-  visual: "mesh" | "fluid" | "flora";
-};
-
-const papers: Paper[] = [
-  {
-    id: "demo-geometry",
-    title: "Spectral Weaving of Animated Surface Fields",
-    institution: "Northbridge Institute of Technology",
-    country: "Switzerland",
-    authors: "Mira Chen · Leon Varga · Ada Ren",
-    topic: "Geometry processing",
-    options: ["Northbridge Institute of Technology", "Bellweather University", "Arcadia Technical University", "Westmere Research Lab"],
-    correct: 0,
-    visual: "mesh",
-  },
-  {
-    id: "demo-fluid",
-    title: "Vortex Sketching for Art-Directed Fluids",
-    institution: "Bellweather University",
-    country: "Canada",
-    authors: "Noah Bell · Ece Kaya · Imani Cole",
-    topic: "Physical simulation",
-    options: ["Arcadia Technical University", "Bellweather University", "Northbridge Institute of Technology", "Westmere Research Lab"],
-    correct: 1,
-    visual: "fluid",
-  },
-  {
-    id: "demo-flora",
-    title: "Branch by Branch: Controllable Botanical Growth",
-    institution: "Arcadia Technical University",
-    country: "Japan",
-    authors: "Rin Sato · Alma Ortiz · Theo Moss",
-    topic: "Procedural modeling",
-    options: ["Westmere Research Lab", "Northbridge Institute of Technology", "Arcadia Technical University", "Bellweather University"],
-    correct: 2,
-    visual: "flora",
-  },
-];
-
-function ResearchVisual({ kind, reveal }: { kind: Paper["visual"]; reveal: number }) {
+function FigureView({ figure, index }: { figure: PaperFigure; index: number }) {
   return (
-    <div className={`research-visual visual-${kind} reveal-${reveal}`} role="img" aria-label="Abstract demo visualization created for this prototype">
-      <div className="figure-grid" />
-      <div className="figure-object object-a" />
-      <div className="figure-object object-b" />
-      <div className="figure-object object-c" />
-      <div className="figure-label">FIG. {reveal + 1}</div>
-      <div className="figure-scale"><span /></div>
-    </div>
+    <figure className="paper-figure">
+      <div className="figure-frame">
+        <img src={figure.src} alt={figure.alt} />
+        <span className="figure-badge">IMAGE {index + 1}</span>
+      </div>
+      <figcaption><b>{figure.number}</b><span>{figure.caption}</span></figcaption>
+    </figure>
   );
 }
 
@@ -70,9 +22,9 @@ export default function Home() {
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [complete, setComplete] = useState(false);
-  const paper = papers[round];
-  const potential = [100, 70, 40][reveal];
-  const progress = useMemo(() => ((round + (selected !== null ? 1 : 0)) / papers.length) * 100, [round, selected]);
+  const paper = playablePapers[round];
+  const potential = [100, 60][reveal];
+  const progress = useMemo(() => ((round + (selected !== null ? 1 : 0)) / playablePapers.length) * 100, [round, selected]);
 
   function choose(index: number) {
     if (selected !== null) return;
@@ -81,7 +33,7 @@ export default function Home() {
   }
 
   function nextRound() {
-    if (round === papers.length - 1) {
+    if (round === playablePapers.length - 1) {
       setComplete(true);
       return;
     }
@@ -99,35 +51,45 @@ export default function Home() {
     setStarted(true);
   }
 
+  if (!paper) {
+    return <main className="result-shell"><div className="result-card"><h1>No approved papers are available.</h1><p>The collection fails closed when its rights checks are incomplete.</p></div></main>;
+  }
+
   if (!started) {
     return (
       <main className="landing-shell">
         <nav className="topbar">
           <a className="brand" href="#top" aria-label="Paper Picture home"><span className="brand-mark">PP</span><span>Paper Picture</span></a>
-          <div className="nav-note">SIGGRAPH 2025 · prototype collection</div>
+          <div className="nav-note">Open Graphics Collection 01</div>
         </nav>
         <section className="hero" id="top">
           <div className="hero-copy">
             <div className="eyebrow"><span /> A visual research game</div>
             <h1>Can you read<br />a paper by its <em>pictures?</em></h1>
-            <p>Study one figure. Guess the institution. Reveal more visual evidence when you need it—but every clue costs points.</p>
+            <p>Study a real, openly licensed research figure. Guess the institution or country. Reveal a second figure when you need it—but every clue costs points.</p>
             <div className="hero-actions">
-              <button className="primary-button" onClick={() => setStarted(true)}>Play the prototype <span>→</span></button>
-              <span className="time-note">3 demo rounds · about 2 min</span>
+              <button className="primary-button" onClick={() => setStarted(true)}>Play the real collection <span>→</span></button>
+              <span className="time-note">3 verified papers · about 3 min</span>
             </div>
           </div>
-          <div className="hero-specimen" aria-hidden="true">
+          <div className="hero-specimen">
             <div className="specimen-number">01</div>
-            <ResearchVisual kind="mesh" reveal={1} />
-            <div className="specimen-caption"><b>Look closely.</b><span>Shape, color, subject, style—every detail might be a clue.</span></div>
+            <FigureView figure={playablePapers[0].figures[1]} index={0} />
+            <div className="specimen-caption"><b>Look closely.</b><span>Every displayed figure is connected to its source, license, and complete citation.</span></div>
           </div>
         </section>
         <section className="principles">
-          <article><span>01</span><h2>Observe</h2><p>Start with a single, carefully prepared paper figure.</p></article>
-          <article><span>02</span><h2>Deduce</h2><p>Choose between plausible institutions from the field.</p></article>
-          <article><span>03</span><h2>Discover</h2><p>Meet the paper, authors and affiliations after your guess.</p></article>
+          <article><span>01</span><h2>Observe</h2><p>Start with one unmodified figure from a real research paper.</p></article>
+          <article><span>02</span><h2>Deduce</h2><p>Choose between plausible institutions or countries.</p></article>
+          <article><span>03</span><h2>Verify</h2><p>See the authors, affiliation, DOI, figure source, and license.</p></article>
         </section>
-        <footer className="landing-footer"><span>Built as an extensible, rights-aware prototype.</span><span>All current papers and figures are fictional.</span></footer>
+        <section className="collection-note" id="method">
+          <div className="eyebrow"><span /> Collection policy</div>
+          <h2>Real papers. Traceable figures.</h2>
+          <p>This first collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless a separate credit says otherwise. The selected captions contain no separate third-party credit. The images are publisher-provided originals and are resized only by the browser.</p>
+          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Read the CC BY 4.0 license ↗</a>
+        </section>
+        <footer className="landing-footer"><span>Open Graphics Collection 01</span><span>3 papers · 6 source-traceable figures</span></footer>
       </main>
     );
   }
@@ -139,33 +101,35 @@ export default function Home() {
           <div className="eyebrow"><span /> Collection complete</div>
           <div className="score-orbit"><strong>{score}</strong><span>/ 300</span></div>
           <h1>You followed the visual evidence.</h1>
-          <p>This prototype uses fictional research so the game can be tested before licensed SIGGRAPH figures are curated.</p>
+          <p>You explored three real CC BY research papers across geometry processing, adaptive meshing, and geometric optimization.</p>
           <button className="primary-button" onClick={restart}>Play again <span>↻</span></button>
-          <button className="text-button" onClick={() => { setStarted(false); setComplete(false); }}>Back to introduction</button>
+          <button className="text-button" onClick={() => { setStarted(false); setComplete(false); }}>Back to collection</button>
         </div>
       </main>
     );
   }
 
+  const figure = paper.figures[reveal];
+
   return (
     <main className="game-shell">
       <header className="game-header">
         <button className="brand brand-button" onClick={() => setStarted(false)}><span className="brand-mark">PP</span><span>Paper Picture</span></button>
-        <div className="round-status"><span>ROUND {String(round + 1).padStart(2, "0")}</span><div className="progress-track"><i style={{ width: `${progress}%` }} /></div><span>{String(papers.length).padStart(2, "0")}</span></div>
+        <div className="round-status"><span>ROUND {String(round + 1).padStart(2, "0")}</span><div className="progress-track"><i style={{ width: `${progress}%` }} /></div><span>{String(playablePapers.length).padStart(2, "0")}</span></div>
         <div className="score"><span>SCORE</span><strong>{String(score).padStart(3, "0")}</strong></div>
       </header>
 
       <section className="game-board">
         <div className="figure-panel">
-          <div className="panel-kicker"><span>{paper.topic}</span><span>Image {reveal + 1} of 3</span></div>
-          <ResearchVisual kind={paper.visual} reveal={reveal} />
-          <div className="figure-footnote"><span>Prototype figure · original artwork</span><span>Identifying labels withheld</span></div>
+          <div className="panel-kicker"><span>{paper.topic}</span><span>Image {reveal + 1} of {paper.figures.length}</span></div>
+          <FigureView figure={figure} index={reveal} />
+          <div className="figure-footnote"><span>{figure.number} · {figure.license}</span><span>Source shown after answer</span></div>
         </div>
 
         <div className="question-panel">
           {selected === null ? (
             <>
-              <div className="question-heading"><span className="question-index">Q{round + 1}</span><div><div className="eyebrow"><span /> Institution</div><h1>Which institution<br />produced this work?</h1></div></div>
+              <div className="question-heading"><span className="question-index">Q{round + 1}</span><div><div className="eyebrow"><span /> {paper.questionType}</div><h1>{paper.question}</h1></div></div>
               <div className="answer-list">
                 {paper.options.map((option, index) => (
                   <button key={option} onClick={() => choose(index)}><span>{String.fromCharCode(65 + index)}</span><b>{option}</b><i>↗</i></button>
@@ -173,7 +137,7 @@ export default function Home() {
               </div>
               <div className="hint-row">
                 <div><strong>{potential}</strong><span>points available</span></div>
-                <button disabled={reveal === 2} onClick={() => setReveal((value) => Math.min(2, value + 1))}>Reveal another image <span>−30 pts</span></button>
+                <button disabled={reveal === paper.figures.length - 1} onClick={() => setReveal(1)}>Reveal second figure <span>−40 pts</span></button>
               </div>
             </>
           ) : (
@@ -182,9 +146,10 @@ export default function Home() {
               <div className="eyebrow"><span /> The paper</div>
               <h1>{paper.title}</h1>
               <p className="authors">{paper.authors}</p>
-              <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Collection</dt><dd>SIGGRAPH 2025 · demo</dd></div></dl>
-              <div className="rights-note"><span>✓</span><p><b>Rights checked</b>This is fictional seed content and original prototype artwork.</p></div>
-              <button className="primary-button" onClick={nextRound}>{round === papers.length - 1 ? "See final score" : "Next paper"} <span>→</span></button>
+              <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Published</dt><dd>{paper.journal}, {paper.year}</dd></div></dl>
+              <div className="source-actions"><a href={paper.paperUrl} target="_blank" rel="noreferrer">Read paper ↗</a><a href={`https://doi.org/${paper.doi}`} target="_blank" rel="noreferrer">DOI ↗</a></div>
+              <div className="rights-note"><span>✓</span><p><b>{figure.number} · {figure.license}</b>{figure.modifications} <a href={figure.sourceUrl} target="_blank" rel="noreferrer">Figure source</a> · <a href={paper.licenseEvidenceUrl} target="_blank" rel="noreferrer">License evidence</a></p></div>
+              <button className="primary-button" onClick={nextRound}>{round === playablePapers.length - 1 ? "See final score" : "Next paper"} <span>→</span></button>
             </div>
           )}
         </div>
