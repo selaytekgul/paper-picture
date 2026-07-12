@@ -1,5 +1,7 @@
 # Paper Picture: Player Profiles Plan
 
+> **Status:** Historical design plan. The private profile, saved-session, assisted-play, feedback, retention, deletion, rate-limit, and owner-inbox work described here is implemented. The live schema differs in some details; use `db/schema.ts`, `app/profile-service.ts`, `PROJECT_STATUS.md`, and `ROADMAP.md` as the current sources of truth.
+
 ## Objective
 
 Add private, durable player profiles to Paper Picture using the site’s existing ChatGPT sign-in. A player should be able to return on another visit, see personal statistics and recent games, and delete their stored data.

@@ -1,5 +1,16 @@
 # Paper Picture operations
 
+## Production coordinates
+
+- Primary URL: `https://paperpicture.net`
+- Health: `https://paperpicture.net/api/health`
+- Feedback inbox: `https://paperpicture.net/admin/feedback`
+- Current collection: `open-graphics-01-v1` / version `1.0`
+- Current deployed site version at the 12 July handoff: 9
+- Access at handoff: owner-only/custom
+
+The GitHub repository backs up source and documentation only. It does not back up D1 data, hosted environment values, authentication configuration, or registrar access.
+
 ## Release model
 
 - The playable set is frozen as `open-graphics-01-v1`, version `1.0`.
@@ -47,6 +58,8 @@
 
 ## Domain launch
 
-1. Buy the domain, but wait to add DNS records until Sites supplies the exact validation and routing records.
-2. Choose the final hostname (for example, `play.example.org`) and the access audience: public, selected testers, or workspace members.
-3. Follow `DOMAIN_SETUP.md` to attach the hostname, configure DNS, verify TLS, and run the domain acceptance pass.
+`paperpicture.net` is attached, publicly resolved, and protected by a valid managed certificate. For a future domain change:
+
+1. Attach the new hostname and use only the routing/validation records returned for that attachment.
+2. Keep the old hostname active until the new route, certificate, canonical metadata, and acceptance checks pass.
+3. Follow `DOMAIN_SETUP.md` and update `PROJECT_STATUS.md` after the change.

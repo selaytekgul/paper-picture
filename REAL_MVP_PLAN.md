@@ -1,5 +1,7 @@
 # Paper Picture: License-First Real MVP Plan
 
+> **Status:** Historical implementation plan. The goal was completed on 12 July 2026 with `Open Graphics Collection 01 · v1.0`: 6 real papers and 18 rights-audited CC BY 4.0 figures. See `PROJECT_STATUS.md` and `ROADMAP.md` for current state and next work.
+
 ## Goal
 
 Serve a playable MVP using only real computer-graphics or digital-geometry papers. No fictional papers, authors, institutions, or figures may remain in the released collection.

@@ -1,5 +1,22 @@
 # Public test checklist
 
+## Infrastructure completed
+
+- [x] Real, license-reviewed six-paper collection is frozen.
+- [x] Profiles, saved games, deletion, feedback, and owner inbox are deployed.
+- [x] `paperpicture.net` DNS, routing, canonical metadata, and HTTPS are active.
+- [x] Production health, robots, and sitemap checks pass.
+- [x] Production remains owner-only pending the audience decision.
+
+## Before sending to one friend
+
+- [ ] Complete one full owner game on `paperpicture.net` after the domain launch.
+- [ ] Submit and resolve one feedback item through the production owner inbox.
+- [ ] Create and privately store a D1 snapshot.
+- [ ] Decide whether the friend is eligible for a custom allowlist; otherwise explicitly approve public outer access.
+- [ ] Record the tester name/contact privately, test dates, and what feedback is requested.
+- [ ] Confirm the friend can enter, play, save, open their private profile, submit feedback, and delete their data.
+
 ## Private acceptance
 
 - [ ] Complete two games with different randomized paper orders.
