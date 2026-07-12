@@ -7,7 +7,7 @@
 - Feedback inbox: `https://paperpicture.net/admin/feedback`
 - Current collection: `open-graphics-01-v1` / version `1.0`
 - Current deployed site version at the 12 July handoff: 9
-- Access at handoff: owner-only/custom
+- Access: public; private application routes remain identity-protected
 
 The GitHub repository backs up source and documentation only. It does not back up D1 data, hosted environment values, authentication configuration, or registrar access.
 

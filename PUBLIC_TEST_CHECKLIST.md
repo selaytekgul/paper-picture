@@ -6,14 +6,14 @@
 - [x] Profiles, saved games, deletion, feedback, and owner inbox are deployed.
 - [x] `paperpicture.net` DNS, routing, canonical metadata, and HTTPS are active.
 - [x] Production health, robots, and sitemap checks pass.
-- [x] Production remains owner-only pending the audience decision.
+- [x] Public outer access is enabled; private data surfaces still require ChatGPT identity.
 
 ## Before sending to one friend
 
 - [ ] Complete one full owner game on `paperpicture.net` after the domain launch.
 - [ ] Submit and resolve one feedback item through the production owner inbox.
 - [ ] Create and privately store a D1 snapshot.
-- [ ] Decide whether the friend is eligible for a custom allowlist; otherwise explicitly approve public outer access.
+- [x] Public outer access was explicitly approved for the friend pilot.
 - [ ] Record the tester name/contact privately, test dates, and what feedback is requested.
 - [ ] Confirm the friend can enter, play, save, open their private profile, submit feedback, and delete their data.
 
@@ -30,11 +30,11 @@
 
 ## Audience decision
 
-Choose exactly one before launch:
+Selected for the current pilot:
 
-- Invite-only pilot: provide 5–15 active workspace-user email addresses for the allowlist.
-- Workspace pilot: explicitly approve access for the entire workspace.
-- Public pilot: explicitly approve public reachability and accept that ChatGPT sign-in is still required for profiles, saves, and feedback.
+- [ ] Invite-only pilot: provide 5–15 active workspace-user email addresses for the allowlist.
+- [ ] Workspace pilot: explicitly approve access for the entire workspace.
+- [x] Public pilot: public reachability is approved; ChatGPT identity remains required for profiles, saves, and feedback.
 
 ## Pilot operation
 

@@ -13,12 +13,12 @@ Snapshot date: **12 July 2026**
 | Hosting | OpenAI Sites |
 | Deployed site version | 9 |
 | Source commit deployed | `4b173ae58553b2c48c58ae9053d19caf39a289ed` |
-| Access policy | Owner-only/custom; no groups |
+| Access policy | Public |
 | Health check | `/api/health` returns 200 and the frozen collection counts |
 | Search files | `/robots.txt` and `/sitemap.xml` return 200 |
 | Canonical host | `https://paperpicture.net` |
 
-The outer production gate intentionally returns an authentication response to unapproved visitors. Do not interpret that as downtime. The application and custom domain were verified through the owner bypass on 12 July 2026.
+The home page and game are publicly reachable. ChatGPT identity is still required for private profiles, saved progress, feedback, and owner administration.
 
 ## Frozen content release
 
@@ -97,7 +97,7 @@ Only configuration names and the logical `DB` binding belong in source control. 
 - There is no automated production database backup or restore drill recorded yet.
 - Cross-browser, mobile, keyboard-only, reduced-motion, and screen-reader acceptance still need a documented manual pass.
 - No analytics dashboard exists; feedback and D1 queries are the current pilot signals.
-- Access is still owner-only, so a friend cannot enter until the owner explicitly chooses public access or an eligible tester allowlist.
+- The public launch is an early pilot; manual cross-browser and accessibility acceptance remains important before wider promotion.
 
 ## Safe handoff rule
 

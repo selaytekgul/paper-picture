@@ -7,7 +7,7 @@ The live MVP uses a frozen, license-reviewed collection. It contains no fictiona
 ## Current release
 
 - Production: <https://paperpicture.net>
-- Access: owner-only until the pilot audience is explicitly approved
+- Access: public; profiles, saved games, and feedback still use ChatGPT identity
 - Collection: `Open Graphics Collection 01 · v1.0`
 - Content: 6 papers and 18 figures
 - Figure rights: article-level CC BY 4.0 plus a figure-level credit check
@@ -29,7 +29,7 @@ The temporary Sites URL remains available as a fallback, but canonical metadata,
 - Owner-only feedback triage with status filters and CSV export
 - Rights evidence with asset hashes and a fail-closed playable collection
 - Privacy notice, tester guide, canonical metadata, social preview, robots file, and sitemap
-- Security headers, no-store authenticated responses, and owner-only production access
+- Security headers, no-store authenticated responses, and private player data
 
 ## Technology
 
@@ -84,12 +84,13 @@ Required runtime names:
 - [Friend/public test checklist](PUBLIC_TEST_CHECKLIST.md)
 - [Domain operations](DOMAIN_SETUP.md)
 - [Rights audit](data/RIGHTS_AUDIT.md)
+- [Repository and figure rights](LICENSE.md)
 
 ## Safety rules
 
 - Never commit production database exports, player feedback, raw emails, runtime secrets, source-repository credentials, browser data, or registrar recovery codes.
 - Do not alter the frozen collection in place. A paper, figure, answer, or scoring-content change requires a new collection ID and version.
 - Do not add a figure without article-level license evidence, a figure-level third-party credit check, attribution, alternative text, and an updated asset hash.
-- Keep production owner-only until the private acceptance pass and audience decision are complete.
+- Keep player records, feedback exports, database snapshots, and hosted configuration out of the public repository.
 
 This repository preserves source and operational knowledge. It is not a backup of private player data or hosted secrets.

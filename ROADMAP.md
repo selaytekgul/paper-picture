@@ -1,32 +1,28 @@
 # Paper Picture roadmap
 
-This roadmap starts from the production snapshot on 12 July 2026. The current site is healthy and owner-only.
+This roadmap starts from the production snapshot on 12 July 2026. The current site and portfolio repository are public.
 
 ## P0 — Before sending the link to a friend
 
-1. **Choose the access model.**
-   - For a friend outside the connected workspace, a public outer access policy is normally required.
-   - Public outer access does not make private profiles public; saved profiles and feedback still use ChatGPT identity.
-   - Do not change access implicitly. Record the decision and the intended tester count.
-2. **Run one owner acceptance game on `paperpicture.net`.**
+1. **Run one owner acceptance game on `paperpicture.net`.**
    - Complete all six rounds.
    - Exercise correct and incorrect answers and all three reveal levels.
    - Open a figure source and confirm the round/game is marked assisted.
    - Confirm the result appears in the private profile.
-3. **Test the feedback loop.**
+2. **Test the feedback loop.**
    - Submit feedback as a player.
    - Confirm it appears in `/admin/feedback` for the owner.
    - Change its status and export a CSV.
    - Store the export privately and delete it when no longer needed.
-4. **Create a production D1 snapshot.**
+3. **Create a production D1 snapshot.**
    - Keep it outside GitHub.
    - Record its timestamp, collection ID, and deployed version in a private release record.
-5. **Run the manual compatibility pass.**
+4. **Run the manual compatibility pass.**
    - Mobile and desktop
    - Chrome, Safari, and Firefox
    - Keyboard-only navigation
    - Reduced motion and basic screen-reader labels
-6. **Send a short tester brief.**
+5. **Send a short tester brief.**
    - Explain the progressive reveal and assisted-game label.
    - Ask the friend to report confusing images, wrong affiliations, accessibility issues, and rights concerns through the feedback form.
 
