@@ -2,6 +2,15 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
+import ts from "typescript";
+
+async function importTypeScriptModule(relativePath) {
+  const source = await readFile(new URL(relativePath, import.meta.url), "utf8");
+  const compiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`);
+}
 
 test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six game modes", async () => {
   const [page, layout, data, data02] = await Promise.all([
@@ -22,6 +31,29 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
   assert.match(page, /href="\/profile"/);
   assert.match(page, /href="\/privacy"/);
   assert.doesNotMatch(page, /fictional|prototype collection|codex-preview/i);
+});
+
+test("links every shipped paper to Paperlog by DOI while retaining the publication DOI", async () => {
+  const [page, data, data02, links] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../data/papers.ts", import.meta.url), "utf8"),
+    readFile(new URL("../data/open-graphics-02.ts", import.meta.url), "utf8"),
+    importTypeScriptModule("../data/paper-links.ts"),
+  ]);
+  const dois = [...data.matchAll(/doi: "([^"]+)"/g), ...data02.matchAll(/doi: "([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(dois.length, 12);
+  assert.equal(new Set(dois).size, 12);
+
+  for (const doi of dois) {
+    const url = new URL(links.paperlogUrlForDoi(doi));
+    assert.equal(url.origin, "https://paperlog.net");
+    assert.equal(url.pathname, "/paper/resolve");
+    assert.equal(url.searchParams.get("doi"), `doi:${doi}`);
+  }
+  assert.match(page, /View on Paperlog ↗/);
+  assert.match(page, /https:\/\/doi\.org\/\$\{paper\.doi\}/);
+  assert.match(page, /paperlogUrlForDoi\(paper\.doi\)/);
+  assert.doesNotMatch(page, />Read paper ↗</);
 });
 
 test("profiles are private, keyed, mode-aware, server-scored, and deletable", async () => {

@@ -28,6 +28,7 @@ Collection 01’s paper records, figure assets, and rights evidence remain uncha
 - Server-recalculated scores of 100, 70, or 40 points
 - Assisted-round marking when a figure source is opened before answering
 - Full paper, author, affiliation, DOI, figure-source, and license reveal
+- DOI-based links from each result to its corresponding Paperlog reading and discussion page
 - Private profiles, saved game history, display-name editing, and complete deletion
 - Authenticated feedback with an owner-only triage and CSV-export inbox
 - Owner-only seven-day operational totals using aggregate hourly counters

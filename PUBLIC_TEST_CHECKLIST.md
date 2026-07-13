@@ -12,7 +12,7 @@
 ## Automated acceptance
 
 - [x] Production build passes.
-- [x] Nine release tests pass.
+- [x] Ten release tests pass.
 - [x] All 36 image checksums match both rights archives.
 - [x] Lint, TypeScript, and whitespace checks pass.
 - [x] Health output contains public collection data only.
@@ -28,6 +28,8 @@
 - [x] Inspect the complete landing/setup page at 390 × 844.
 - [x] Confirm responsive one-column pickers, readable labels, visible focus styles, and reduced-motion CSS.
 - [x] Complete production Google and GitHub authorization callbacks and provider-aware sign-out.
+- [x] Confirm the Paperlog action and retained DOI action on desktop and at 390 × 844.
+- [x] Confirm all 12 production Paperlog DOI redirects reach their expected canonical paper pages.
 
 ## Owner acceptance after deployment
 

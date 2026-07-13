@@ -31,6 +31,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 
 - Collection picker and six game modes: institution, country, author, venue, year, and topic
 - Progressive reveal, assisted-round classification, scoring, and complete attribution
+- DOI-based result links to the corresponding Paperlog page, with the publication DOI retained separately
 - Anonymous play with a clear, non-blocking saved-history fallback
 - Optional ChatGPT, Google, and GitHub sign-in with a provider-neutral private profile per verified email
 - Server-owned authenticated sessions, attempts, completion, and score calculation
