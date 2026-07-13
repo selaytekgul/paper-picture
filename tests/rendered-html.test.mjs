@@ -17,6 +17,7 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
   assert.match(page, /collectionCatalog/);
   assert.match(page, /gameModes/);
   assert.match(page, /buildRoundQuestion/);
+  assert.match(page, /gameMode === "topic" \? "Visual research clue" : paper\.topic/);
   assert.match(page, /CC BY 4\.0/);
   assert.match(page, /href="\/profile"/);
   assert.match(page, /href="\/privacy"/);

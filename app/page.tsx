@@ -242,7 +242,7 @@ export default function Home() {
 
       <section className="game-board">
         <div className="figure-panel">
-          <div className="panel-kicker"><span>{paper.topic}</span><span>Image {reveal + 1} of {paper.figures.length}</span></div>
+          <div className="panel-kicker"><span>{gameMode === "topic" ? "Visual research clue" : paper.topic}</span><span>Image {reveal + 1} of {paper.figures.length}</span></div>
           <FigureView figure={figure} index={reveal} onSourceOpen={() => selected === null && setSourceOpened(true)} />
           <div className="figure-footnote"><span>{figure.number} · {figure.license}</span><span>{sourceOpened ? "Assisted round: source opened" : "Opening Source before answering marks this round assisted"}</span></div>
         </div>
