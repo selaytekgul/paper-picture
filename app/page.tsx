@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { paperlogUrlForDoi } from "../data/paper-links";
 import {
   buildRoundQuestion,
@@ -59,10 +59,11 @@ export default function Home() {
   const [sourceOpened, setSourceOpened] = useState(false);
   const [assistedRounds, setAssistedRounds] = useState(0);
   const [scoreClass, setScoreClass] = useState<"casual" | "assisted">("casual");
+  const questionHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const selectedCollection = getCollection(selectedCollectionId) ?? defaultCollection;
-  const selectedPapers = getPlayablePapers(selectedCollection.id);
   const selectedStats = collectionStats(selectedCollection.id);
+  const selectedModeDetails = gameModes.find((mode) => mode.id === selectedMode) ?? gameModes[0];
   const totalStats = collectionCatalog.reduce((total, item) => {
     const stats = collectionStats(item.id);
     return { papers: total.papers + stats.paperCount, figures: total.figures + stats.figureCount };
@@ -72,6 +73,10 @@ export default function Home() {
   const potential = pointsForImagesSeen(reveal + 1);
   const progress = useMemo(() => gamePapers.length ? ((round + (selected !== null ? 1 : 0)) / gamePapers.length) * 100 : 0, [gamePapers.length, round, selected]);
   const activeCollection = getCollection(selectedCollectionId) ?? selectedCollection;
+
+  useEffect(() => {
+    if (started && !complete && selected === null) questionHeadingRef.current?.focus();
+  }, [complete, round, selected, started]);
 
   async function startGame() {
     const collectionPapers = getPlayablePapers(selectedCollection.id);
@@ -155,61 +160,48 @@ export default function Home() {
   if (!paper) return <main className="result-shell"><div className="result-card"><h1>No approved papers are available.</h1><p>The collection fails closed when its rights checks are incomplete.</p></div></main>;
 
   if (!started) {
-    const specimen = selectedPapers[0];
     return (
-      <main className="landing-shell">
+      <main className="landing-shell" id="top">
         <a className="skip-link" href="#main-content">Skip to main content</a>
         <nav className="topbar" aria-label="Primary navigation">
           <a className="brand" href="#top" aria-label="Paper Picture home"><span className="brand-mark">PP</span><span>Paper Picture</span></a>
-          <div className="topbar-actions"><span className="nav-note">{totalStats.papers} papers · {totalStats.figures} figures</span><a href="/test-guide">Test guide</a><a href="/profile">My profile</a></div>
+          <div className="topbar-actions"><a href="/test-guide">How it works</a><a className="profile-link" href="/profile">My games</a></div>
         </nav>
-        <section className="hero" id="main-content">
-          <div className="hero-copy" id="top">
-            <div className="eyebrow"><span /> A visual research game</div>
-            <h1>Can you read<br />a paper by its <em>pictures?</em></h1>
-            <p>Study a real, openly licensed research figure. Guess its people, place, venue, year, or topic. Reveal another figure when you need it—but every clue costs points.</p>
-            <a className="text-link" href="#game-setup">Choose a collection and mode ↓</a>
-          </div>
-          <div className="hero-specimen">
-            <div className="specimen-number">{selectedCollection.title.slice(-2)}</div>
-            <FigureView figure={specimen.figures[1]} index={0} />
-            <div className="specimen-caption"><b>Look closely.</b><span>Every figure is connected to its source, license, and complete citation.</span></div>
-          </div>
+        <section className="simple-hero" id="main-content">
+          <div className="eyebrow"><span /> A visual research game</div>
+          <h1>Look at the figure.<br /><em>Guess the paper.</em></h1>
+          <p>Explore real computer-graphics research through its pictures. Choose what you want to guess, then play six quick rounds.</p>
+          <div className="hero-facts" aria-label="Game summary"><span>No sign-in needed</span><span>6 rounds</span><span>About 3 minutes</span></div>
         </section>
 
-        <section className="game-setup" id="game-setup" aria-labelledby="setup-title">
-          <div className="setup-heading"><div><div className="eyebrow"><span /> Build your round</div><h2 id="setup-title">Choose what to investigate.</h2></div><p>Anonymous play works immediately. Sign in only if you want a private saved history.</p></div>
+        <section className="game-setup simple-game-setup" id="game-setup" aria-labelledby="setup-title">
+          <div className="setup-heading"><div><div className="eyebrow"><span /> Start here</div><h2 id="setup-title">Set up your game.</h2></div><p>Choose a collection and what you want to guess.</p></div>
           <fieldset className="collection-picker">
-            <legend>1. Collection</legend>
+            <legend><b>1</b> Pick a collection</legend>
             <div>
               {collectionCatalog.map((item) => {
                 const stats = collectionStats(item.id);
                 const active = selectedCollectionId === item.id;
-                return <button type="button" key={item.id} className={active ? "is-selected" : ""} aria-pressed={active} onClick={() => setSelectedCollectionId(item.id)}><span>{item.title}</span><b>{item.description}</b><small>{stats.paperCount} papers · {stats.figureCount} figures · frozen {item.frozenAt}</small></button>;
+                return <button type="button" key={item.id} className={active ? "is-selected" : ""} aria-pressed={active} onClick={() => setSelectedCollectionId(item.id)}><span>Collection {item.title.slice(-2).replace(/^0/, "")}</span><b>{item.description}</b><small>{stats.paperCount} real papers · {stats.figureCount} figures</small></button>;
               })}
             </div>
           </fieldset>
           <fieldset className="mode-picker">
-            <legend>2. Question mode</legend>
+            <legend><b>2</b> What do you want to guess?</legend>
             <div>
-              {gameModes.map((mode) => <button type="button" key={mode.id} className={selectedMode === mode.id ? "is-selected" : ""} aria-pressed={selectedMode === mode.id} onClick={() => setSelectedMode(mode.id)}><span>{mode.label}</span><small>{mode.description}</small></button>)}
+              {gameModes.map((mode) => <button type="button" key={mode.id} className={selectedMode === mode.id ? "is-selected" : ""} aria-pressed={selectedMode === mode.id} onClick={() => setSelectedMode(mode.id)}><span>{mode.label}</span></button>)}
             </div>
+            <p className="mode-help" aria-live="polite"><b>{selectedModeDetails.label}:</b> {selectedModeDetails.description}</p>
           </fieldset>
-          <div className="setup-action"><button className="primary-button" onClick={startGame}>Play {selectedCollection.title} <span>→</span></button><span>{selectedStats.paperCount} rounds · up to {selectedStats.maximumScore} points</span></div>
+          <div className="setup-action"><button className="primary-button" onClick={startGame}>Start the game <span>→</span></button><div><b>{selectedStats.paperCount} rounds · up to {selectedStats.maximumScore} points</b><span>Play now. Sign in later only if you want to save.</span></div></div>
         </section>
 
-        <section className="principles">
-          <article><span>01</span><h2>Observe</h2><p>Start with one unmodified figure from a real research paper.</p></article>
-          <article><span>02</span><h2>Deduce</h2><p>Choose between four plausible, real answers in six game modes.</p></article>
-          <article><span>03</span><h2>Verify</h2><p>See the authors, affiliation, DOI, figure source, and license.</p></article>
+        <section className="simple-how" aria-labelledby="how-title">
+          <div><span>How it works</span><h2 id="how-title">Look. Guess. Learn.</h2></div>
+          <ol><li><b>1</b><span>Study one research figure.</span></li><li><b>2</b><span>Choose from four answers.</span></li><li><b>3</b><span>See the paper and its source.</span></li></ol>
         </section>
-        <section className="collection-note" id="method">
-          <div className="eyebrow"><span /> Collection policy</div>
-          <h2>Real papers. Traceable figures. Versioned sets.</h2>
-          <p>Each frozen collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless separately credited. Collection 01 remains unchanged; Collection 02 has its own evidence archive and checksums.</p>
-          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Read the CC BY 4.0 license ↗</a>
-        </section>
-        <footer className="landing-footer"><span>Paper Picture · paperpicture.net</span><span>{collectionCatalog.length} collections · {totalStats.papers} papers · {totalStats.figures} figures</span><span><a href="/feedback">Feedback</a> · <a href="/privacy">Privacy</a></span></footer>
+        <p className="trust-note">Every clue comes from a real, openly licensed paper. Sources and credits are shown after each answer. <a href="/test-guide">See how papers are selected.</a></p>
+        <footer className="landing-footer"><span>{totalStats.papers} real papers · {totalStats.figures} figures · CC BY 4.0</span><span><a href="/feedback">Feedback</a><a href="/privacy">Privacy</a><a href="https://github.com/selaytekgul/paper-picture" target="_blank" rel="noreferrer">GitHub</a></span></footer>
       </main>
     );
   }
@@ -220,8 +212,8 @@ export default function Home() {
         <div className="result-card">
           <div className="eyebrow"><span /> {activeCollection.label} · {gameMode} complete</div>
           <div className="score-orbit"><strong>{score}</strong><span>/ {gamePapers.length * 100}</span></div>
-          <h1>You followed the visual evidence.</h1>
-          <p>You explored {gamePapers.length} real CC BY research papers in {gameMode} mode.</p>
+          <h1>Game complete.</h1>
+          <p>You explored {gamePapers.length} real research papers and scored {score} points.</p>
           {assistedRounds > 0 && <p className="assisted-note">Assisted game · source opened before answering in {assistedRounds} {assistedRounds === 1 ? "round" : "rounds"}.</p>}
           <p aria-live="polite" className={`save-message ${saveState === "saved" ? "is-saved" : "is-unsaved"}`}>{saveState === "saved" ? `✓ This ${scoreClass} game is saved to your private profile.` : "Played anonymously. Sign in through My profile before your next game if you want it saved."}</p>
           <div className="result-actions"><button className="primary-button" onClick={startGame}>Play again <span>↻</span></button><a className="secondary-button" href="/feedback">Give feedback</a><a className="secondary-button" href="/profile">View profile</a></div>
@@ -237,29 +229,29 @@ export default function Home() {
       <a className="skip-link" href="#question">Skip to question</a>
       <header className="game-header">
         <button className="brand brand-button" onClick={() => setStarted(false)} aria-label="Leave game and return to collection"><span className="brand-mark">PP</span><span>Paper Picture</span></button>
-        <div className="round-status"><span>ROUND {String(round + 1).padStart(2, "0")}</span><div className="progress-track" role="progressbar" aria-label="Collection progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></div><span>{String(gamePapers.length).padStart(2, "0")}</span></div>
-        <div className="header-right"><span className="mode-badge">{gameMode}</span><span aria-live="polite" className={`save-indicator ${saveState}`}>{saveState === "saving" || saveState === "connecting" ? "Saving…" : saveState === "unsaved" ? "Anonymous" : "Saved"}</span><a href="/feedback">Feedback</a><div className="score"><span>SCORE</span><strong>{String(score).padStart(3, "0")}</strong></div></div>
+        <div className="round-status"><b>{round + 1} of {gamePapers.length}</b><div className="progress-track" role="progressbar" aria-label="Game progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></div></div>
+        <div className="header-right"><span aria-live="polite" className={`save-indicator ${saveState}`}>{saveState === "saving" || saveState === "connecting" ? "Saving…" : saveState === "unsaved" ? "Not saved" : "Saved"}</span><div className="score"><span>Score</span><strong>{score}</strong></div></div>
       </header>
 
       <section className="game-board">
         <div className="figure-panel">
-          <div className="panel-kicker"><span>{gameMode === "topic" ? "Visual research clue" : paper.topic}</span><span>Image {reveal + 1} of {paper.figures.length}</span></div>
+          <div className="panel-kicker"><span>{gameMode === "topic" ? "Research figure" : paper.topic}</span><span>Clue {reveal + 1} of {paper.figures.length}</span></div>
           <FigureView figure={figure} index={reveal} onSourceOpen={() => selected === null && setSourceOpened(true)} />
-          <div className="figure-footnote"><span>{figure.number} · {figure.license}</span><span>{sourceOpened ? "Assisted round: source opened" : "Opening Source before answering marks this round assisted"}</span></div>
+          <div className="figure-footnote"><span>{figure.number} · {figure.license}</span><span>{sourceOpened ? "Source opened · assisted round" : "Opening the source marks this round assisted"}</span></div>
         </div>
 
         <div className="question-panel" id="question">
           {selected === null ? (
             <>
-              <div className="question-heading"><span className="question-index">Q{round + 1}</span><div><div className="eyebrow"><span /> {question?.label}</div><h1>{question?.prompt}</h1></div></div>
+              <div className="question-heading"><div><div className="question-label">Guess the {question?.label.toLowerCase()}</div><h1 ref={questionHeadingRef} tabIndex={-1}>{question?.prompt}</h1></div></div>
               <div className="answer-list">
                 {question?.options.map((option, index) => <button key={option} disabled={saveState === "connecting"} onClick={() => choose(index)}><span>{String.fromCharCode(65 + index)}</span><b>{saveState === "connecting" ? "Preparing game…" : option}</b><i aria-hidden="true">↗</i></button>)}
               </div>
-              <div className="hint-row"><div><strong>{potential}</strong><span>points available</span></div><button disabled={saveState === "connecting" || reveal === paper.figures.length - 1} onClick={() => setReveal((value) => Math.min(paper.figures.length - 1, value + 1))}>Reveal next figure <span>−30 pts</span></button></div>
+              <div className="hint-row"><div><strong>{potential} points</strong><span>for this answer</span></div><button disabled={saveState === "connecting" || reveal === paper.figures.length - 1} onClick={() => setReveal((value) => Math.min(paper.figures.length - 1, value + 1))}>Show another clue <span>−30 points</span></button></div>
             </>
           ) : (
             <div className="answer-reveal">
-              <div role="status" className={`verdict ${selected === question?.correct ? "correct" : "incorrect"}`}>{selected === question?.correct ? "Correct deduction" : "Not this time"}</div>
+              <div role="status" className={`verdict ${selected === question?.correct ? "correct" : "incorrect"}`}>{selected === question?.correct ? "Correct!" : "Not quite"}</div>
               {sourceOpened && <p className="assisted-note">This round is recorded as assisted because the figure source was opened before answering.</p>}
               <div className="eyebrow"><span /> The paper</div><h1>{paper.title}</h1><p className="authors">{paper.authors}</p>
               <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Published</dt><dd>{paper.journal}, {paper.year}</dd></div><div><dt>Topic</dt><dd>{paper.topic}</dd></div></dl>

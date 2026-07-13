@@ -1,10 +1,10 @@
 # Paper Picture
 
-[Paper Picture](https://paperpicture.net) is a visual research game: players study progressively revealed figures from real computer-graphics and digital-geometry papers, then identify an author, institution, country, venue, year, or topic.
+[Paper Picture](https://paperpicture.net) is a quick visual research game: look at a figure, choose what you want to guess, and discover the real computer-graphics or digital-geometry paper behind it.
 
 Every playable figure has a publisher source, article-level reuse evidence, a figure-credit review, descriptive alternative text, and a recorded SHA-256 checksum. The application contains no fictional papers, authors, or affiliations.
 
-![Paper Picture collection and mode picker](docs/assets/paper-picture-home.png)
+![Paper Picture plain game setup](docs/assets/paper-picture-home.png)
 
 ## Live release
 
@@ -12,6 +12,7 @@ Every playable figure has a publisher source, article-level reuse evidence, a fi
 - Content: 2 immutable collections, 12 papers, and 36 figures
 - Modes: institution, country, author, venue, year, and topic
 - Play: anonymous by default; sign in only to save private history or send feedback
+- Experience: one short introduction, two setup choices, one clear start action, and six quick rounds
 - Figure rights: CC BY 4.0 article coverage plus a selected-figure credit check
 - Hosting: OpenAI Sites, Cloudflare Workers-compatible vinext output, and D1
 
