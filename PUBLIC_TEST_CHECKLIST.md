@@ -40,7 +40,7 @@
 - [x] Submit one new feedback item, change its status, and privately export the CSV.
 - [x] Confirm the seven-day owner totals load without player identifiers.
 - [ ] Delete a disposable test profile and verify related data is removed.
-- [ ] Confirm the backup endpoint still includes all six tables after migration.
+- [x] Confirm the backup endpoint still includes all six tables after migration.
 
 ## Compatibility still to record
 

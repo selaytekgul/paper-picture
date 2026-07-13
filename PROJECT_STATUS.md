@@ -14,7 +14,7 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 15 · source commit `f8aced8` |
+| Current Sites version | 16 · source commit `5970509` |
 
 The Sites control plane retains saved deployment versions. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
@@ -38,7 +38,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 - Private player profile, history, editing, and complete data deletion
 - Authenticated feedback/contact form and owner-only inbox with status management and CSV export
 - Owner-only seven-day operational dashboard using aggregate hourly counters
-- Owner-only production backup export
+- Owner-only production backup export with client-side manifest and six-table verification
 - Privacy notice, tester guide, canonical metadata, social preview, security headers, robots file, and sitemap
 
 ## Data model and retention
@@ -64,7 +64,7 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 
 ## Release evidence completed
 
-- A private production backup was exported on 13 July and stored outside the repository with owner-only filesystem permissions.
+- A fresh private production backup was exported from version 16 on 13 July, verified to contain both collection descriptors and all six application tables, and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
 - Production build, lint, TypeScript, whitespace checks, and ten automated release tests pass.
 - All 12 shipped DOI links redirect through production Paperlog to the expected canonical paper pages; both redirect and destination return successfully.
@@ -72,6 +72,7 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 - Google and ChatGPT returned the same verified owner email and reached the existing profile. GitHub returned a different verified email and correctly remained a separate private profile.
 - All 36 rights-evidence checksums match the shipped figure files.
 - A complete anonymous country-mode game passed, including a second-figure reveal and final scoring.
+- Owner acceptance confirmed saved history for both collections, incorrect and third-reveal assisted states, feedback status management and CSV export, aggregate metrics, and the verified backup workflow.
 - The collection/mode picker and full landing page were visually checked at a 390-pixel mobile viewport.
 - Native controls expose button, pressed, progress, status, heading, link, and fieldset semantics; visible focus and reduced-motion styles are present.
 
