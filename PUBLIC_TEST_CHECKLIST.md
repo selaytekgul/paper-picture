@@ -27,11 +27,12 @@
 - [x] Reach the final result state at 570/600 and see the anonymous-save explanation.
 - [x] Inspect the complete landing/setup page at 390 × 844.
 - [x] Confirm responsive one-column pickers, readable labels, visible focus styles, and reduced-motion CSS.
+- [x] Complete production Google and GitHub authorization callbacks and provider-aware sign-out.
 
 ## Owner acceptance after deployment
 
-- [ ] Complete and cancel sign-in once with each enabled provider: ChatGPT, Google, and GitHub.
-- [ ] Confirm matching verified emails reach the same private profile; confirm sign-out clears the selected provider session.
+- [x] Complete production sign-in with Google and GitHub; retain the existing native ChatGPT path.
+- [x] Confirm matching verified emails reach the same private profile, different verified emails remain isolated, and sign-out clears the selected provider session.
 - [ ] Save one game in each collection and confirm mode labels in private history.
 - [ ] Exercise an incorrect answer, third-figure reveal, and assisted source-open state.
 - [ ] Submit one new feedback item, change its status, and privately export the CSV.
@@ -54,6 +55,7 @@
 - [ ] Add `paperpicture.net` as a Google Search Console domain property.
 - [ ] Submit `https://paperpicture.net/sitemap.xml` in Search Console.
 - [ ] Inspect `https://paperpicture.net/` and request indexing once after verification.
+- [ ] Complete Google OAuth consent-branding verification after domain ownership is available in Search Console.
 
 ## Friend pilot brief
 

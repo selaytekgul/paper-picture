@@ -12,6 +12,7 @@ This roadmap starts from the two-collection release prepared on 13 July 2026. Th
 - Private production backup export and one verified snapshot
 - Aggregate-only owner metrics for starts, completions, attempts, feedback, deletion, and server errors
 - Public repository showcase, architecture, rights records, runbook, and worklogs
+- Portable Google and GitHub OAuth alongside native ChatGPT identity, with secrets hosted outside Git
 
 ## P0 — First friend pilot
 
@@ -30,6 +31,7 @@ This roadmap starts from the two-collection release prepared on 13 July 2026. Th
 - Establish encrypted recurring D1 backups and perform a documented restore drill.
 - Add alerting only after enough aggregate traffic exists to define a meaningful error or completion baseline.
 - Move retention cleanup to a scheduled global job.
+- Verify Google consent branding after claiming `paperpicture.net` in Search Console.
 
 ## P2 — Content expansion
 

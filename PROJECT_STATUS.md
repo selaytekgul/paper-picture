@@ -14,6 +14,7 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
+| Current Sites version | 14 · source commit `c821654` |
 
 The Sites control plane retains saved deployment versions. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
@@ -31,7 +32,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 - Collection picker and six game modes: institution, country, author, venue, year, and topic
 - Progressive reveal, assisted-round classification, scoring, and complete attribution
 - Anonymous play with a clear, non-blocking saved-history fallback
-- Optional ChatGPT, Google, and GitHub sign-in with one provider-neutral private profile
+- Optional ChatGPT, Google, and GitHub sign-in with a provider-neutral private profile per verified email
 - Server-owned authenticated sessions, attempts, completion, and score calculation
 - Private player profile, history, editing, and complete data deletion
 - Authenticated feedback/contact form and owner-only inbox with status management and CSV export
@@ -64,7 +65,9 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 
 - A private production backup was exported on 13 July and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
-- Production build, lint, whitespace checks, and seven automated release tests pass.
+- Production build, lint, TypeScript, whitespace checks, and nine automated release tests pass.
+- Google and GitHub production sign-in, callback, profile loading, and sign-out were exercised successfully on `paperpicture.net`.
+- Google and ChatGPT returned the same verified owner email and reached the existing profile. GitHub returned a different verified email and correctly remained a separate private profile.
 - All 36 rights-evidence checksums match the shipped figure files.
 - A complete anonymous country-mode game passed, including a second-figure reveal and final scoring.
 - The collection/mode picker and full landing page were visually checked at a 390-pixel mobile viewport.
@@ -89,6 +92,7 @@ Preserve the HMAC secret outside Git: replacing it would disconnect existing pro
 - Retention cleanup is request-driven rather than a scheduled global job.
 - Safari, Firefox, screen-reader, and restore-drill acceptance still require owner-operated checks.
 - Aggregate monitoring is descriptive; it does not yet send alerts.
+- Google authentication works in production, but Google consent-branding verification remains pending; until verification, Google may display the domain rather than the Paper Picture brand name.
 
 ## Handoff rule
 
