@@ -14,7 +14,7 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 14 · source commit `c821654` |
+| Current Sites version | 15 · source commit `f8aced8` |
 
 The Sites control plane retains saved deployment versions. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
@@ -66,7 +66,8 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 
 - A private production backup was exported on 13 July and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
-- Production build, lint, TypeScript, whitespace checks, and nine automated release tests pass.
+- Production build, lint, TypeScript, whitespace checks, and ten automated release tests pass.
+- All 12 shipped DOI links redirect through production Paperlog to the expected canonical paper pages; both redirect and destination return successfully.
 - Google and GitHub production sign-in, callback, profile loading, and sign-out were exercised successfully on `paperpicture.net`.
 - Google and ChatGPT returned the same verified owner email and reached the existing profile. GitHub returned a different verified email and correctly remained a separate private profile.
 - All 36 rights-evidence checksums match the shipped figure files.
