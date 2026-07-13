@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { paperlogUrlForDoi } from "../data/paper-links";
 import {
   buildRoundQuestion,
   collectionCatalog,
@@ -262,7 +263,7 @@ export default function Home() {
               {sourceOpened && <p className="assisted-note">This round is recorded as assisted because the figure source was opened before answering.</p>}
               <div className="eyebrow"><span /> The paper</div><h1>{paper.title}</h1><p className="authors">{paper.authors}</p>
               <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Published</dt><dd>{paper.journal}, {paper.year}</dd></div><div><dt>Topic</dt><dd>{paper.topic}</dd></div></dl>
-              <div className="source-actions"><a href={paper.paperUrl} target="_blank" rel="noreferrer">Read paper ↗</a><a href={`https://doi.org/${paper.doi}`} target="_blank" rel="noreferrer">DOI ↗</a></div>
+              <div className="source-actions"><a href={paperlogUrlForDoi(paper.doi)} target="_blank" rel="noreferrer">View on Paperlog ↗</a><a href={`https://doi.org/${paper.doi}`} target="_blank" rel="noreferrer">DOI ↗</a></div>
               <div className="rights-note"><span>✓</span><p><b>{figure.number} · {figure.license}</b>{figure.modifications} <a href={figure.sourceUrl} target="_blank" rel="noreferrer">Figure source</a> · <a href={paper.licenseEvidenceUrl} target="_blank" rel="noreferrer">License evidence</a></p></div>
               <button className="primary-button" disabled={saveState === "saving"} onClick={nextRound}>{saveState === "saving" ? "Saving answer…" : round === gamePapers.length - 1 ? "See final score" : "Next paper"} <span>→</span></button>
             </div>
