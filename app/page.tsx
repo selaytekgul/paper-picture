@@ -1,7 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { collection, collectionFigureCount, collectionPaperCount, maximumCollectionScore, playablePapers, pointsForImagesSeen, type Paper, type PaperFigure } from "../data/papers";
+import {
+  buildRoundQuestion,
+  collectionCatalog,
+  collectionStats,
+  gameModes,
+  getCollection,
+  getPlayablePapers,
+  pointsForImagesSeen,
+  type GameMode,
+  type Paper,
+  type PaperFigure,
+} from "../data/papers";
 
 function FigureView({ figure, index, onSourceOpen }: { figure: PaperFigure; index: number; onSourceOpen?: () => void }) {
   return (
@@ -31,8 +42,12 @@ function localShuffle(papers: Paper[]) {
 }
 
 export default function Home() {
+  const defaultCollection = collectionCatalog[1] ?? collectionCatalog[0];
+  const [selectedCollectionId, setSelectedCollectionId] = useState(defaultCollection.id);
+  const [selectedMode, setSelectedMode] = useState<GameMode>("institution");
+  const [gameMode, setGameMode] = useState<GameMode>("institution");
   const [started, setStarted] = useState(false);
-  const [gamePapers, setGamePapers] = useState<Paper[]>(playablePapers);
+  const [gamePapers, setGamePapers] = useState<Paper[]>(getPlayablePapers(defaultCollection.id));
   const [round, setRound] = useState(0);
   const [reveal, setReveal] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -43,13 +58,25 @@ export default function Home() {
   const [sourceOpened, setSourceOpened] = useState(false);
   const [assistedRounds, setAssistedRounds] = useState(0);
   const [scoreClass, setScoreClass] = useState<"casual" | "assisted">("casual");
+
+  const selectedCollection = getCollection(selectedCollectionId) ?? defaultCollection;
+  const selectedPapers = getPlayablePapers(selectedCollection.id);
+  const selectedStats = collectionStats(selectedCollection.id);
+  const totalStats = collectionCatalog.reduce((total, item) => {
+    const stats = collectionStats(item.id);
+    return { papers: total.papers + stats.paperCount, figures: total.figures + stats.figureCount };
+  }, { papers: 0, figures: 0 });
   const paper = gamePapers[round];
+  const question = useMemo(() => paper ? buildRoundQuestion(paper, gameMode) : null, [gameMode, paper]);
   const potential = pointsForImagesSeen(reveal + 1);
-  const progress = useMemo(() => ((round + (selected !== null ? 1 : 0)) / gamePapers.length) * 100, [gamePapers.length, round, selected]);
+  const progress = useMemo(() => gamePapers.length ? ((round + (selected !== null ? 1 : 0)) / gamePapers.length) * 100 : 0, [gamePapers.length, round, selected]);
+  const activeCollection = getCollection(selectedCollectionId) ?? selectedCollection;
 
   async function startGame() {
+    const collectionPapers = getPlayablePapers(selectedCollection.id);
     setStarted(true);
-    setGamePapers(localShuffle(playablePapers));
+    setGameMode(selectedMode);
+    setGamePapers(localShuffle(collectionPapers));
     setRound(0);
     setReveal(0);
     setSelected(null);
@@ -61,13 +88,18 @@ export default function Home() {
     setScoreClass("casual");
     setSaveState("connecting");
     try {
-      const response = await fetch("/api/game-sessions", { method: "POST" });
-      const result = await response.json() as { id?: string; paperIds?: string[] };
+      const response = await fetch("/api/game-sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collectionId: selectedCollection.id, mode: selectedMode }),
+      });
+      const result = await response.json() as { id?: string; paperIds?: string[]; mode?: GameMode };
       if (!response.ok || !result.id || !Array.isArray(result.paperIds)) throw new Error("Session unavailable");
-      const ordered = result.paperIds.map((id) => playablePapers.find((candidate) => candidate.id === id)).filter((candidate): candidate is Paper => Boolean(candidate));
-      if (ordered.length !== playablePapers.length) throw new Error("Collection order is incomplete");
+      const ordered = result.paperIds.map((id) => collectionPapers.find((candidate) => candidate.id === id)).filter((candidate): candidate is Paper => Boolean(candidate));
+      if (ordered.length !== collectionPapers.length) throw new Error("Collection order is incomplete");
       setGamePapers(ordered);
       setSessionId(result.id);
+      setGameMode(result.mode ?? selectedMode);
       setSaveState("saved");
     } catch {
       setSaveState("unsaved");
@@ -75,10 +107,10 @@ export default function Home() {
   }
 
   async function choose(index: number) {
-    if (selected !== null) return;
+    if (selected !== null || !paper || !question) return;
     setSelected(index);
     if (sourceOpened) setAssistedRounds((value) => value + 1);
-    if (index === paper.correct) setScore((value) => value + potential);
+    if (index === question.correct) setScore((value) => value + potential);
     if (!sessionId) return;
     setSaveState("saving");
     try {
@@ -122,41 +154,61 @@ export default function Home() {
   if (!paper) return <main className="result-shell"><div className="result-card"><h1>No approved papers are available.</h1><p>The collection fails closed when its rights checks are incomplete.</p></div></main>;
 
   if (!started) {
+    const specimen = selectedPapers[0];
     return (
       <main className="landing-shell">
         <a className="skip-link" href="#main-content">Skip to main content</a>
         <nav className="topbar" aria-label="Primary navigation">
           <a className="brand" href="#top" aria-label="Paper Picture home"><span className="brand-mark">PP</span><span>Paper Picture</span></a>
-          <div className="topbar-actions"><span className="nav-note">{collection.label}</span><a href="/test-guide">Test guide</a><a href="/profile">My profile</a></div>
+          <div className="topbar-actions"><span className="nav-note">{totalStats.papers} papers · {totalStats.figures} figures</span><a href="/test-guide">Test guide</a><a href="/profile">My profile</a></div>
         </nav>
         <section className="hero" id="main-content">
           <div className="hero-copy" id="top">
             <div className="eyebrow"><span /> A visual research game</div>
             <h1>Can you read<br />a paper by its <em>pictures?</em></h1>
-            <p>Study a real, openly licensed research figure. Guess the institution or country. Reveal another figure when you need it—but every clue costs points.</p>
-            <div className="hero-actions">
-              <button className="primary-button" onClick={startGame}>Play the randomized collection <span>→</span></button>
-              <span className="time-note">{collectionPaperCount} verified papers · {collectionFigureCount} licensed figures</span>
-            </div>
+            <p>Study a real, openly licensed research figure. Guess its people, place, venue, year, or topic. Reveal another figure when you need it—but every clue costs points.</p>
+            <a className="text-link" href="#game-setup">Choose a collection and mode ↓</a>
           </div>
           <div className="hero-specimen">
-            <div className="specimen-number">01</div>
-            <FigureView figure={playablePapers[0].figures[1]} index={0} />
+            <div className="specimen-number">{selectedCollection.title.slice(-2)}</div>
+            <FigureView figure={specimen.figures[1]} index={0} />
             <div className="specimen-caption"><b>Look closely.</b><span>Every figure is connected to its source, license, and complete citation.</span></div>
           </div>
         </section>
+
+        <section className="game-setup" id="game-setup" aria-labelledby="setup-title">
+          <div className="setup-heading"><div><div className="eyebrow"><span /> Build your round</div><h2 id="setup-title">Choose what to investigate.</h2></div><p>Anonymous play works immediately. Sign in only if you want a private saved history.</p></div>
+          <fieldset className="collection-picker">
+            <legend>1. Collection</legend>
+            <div>
+              {collectionCatalog.map((item) => {
+                const stats = collectionStats(item.id);
+                const active = selectedCollectionId === item.id;
+                return <button type="button" key={item.id} className={active ? "is-selected" : ""} aria-pressed={active} onClick={() => setSelectedCollectionId(item.id)}><span>{item.title}</span><b>{item.description}</b><small>{stats.paperCount} papers · {stats.figureCount} figures · frozen {item.frozenAt}</small></button>;
+              })}
+            </div>
+          </fieldset>
+          <fieldset className="mode-picker">
+            <legend>2. Question mode</legend>
+            <div>
+              {gameModes.map((mode) => <button type="button" key={mode.id} className={selectedMode === mode.id ? "is-selected" : ""} aria-pressed={selectedMode === mode.id} onClick={() => setSelectedMode(mode.id)}><span>{mode.label}</span><small>{mode.description}</small></button>)}
+            </div>
+          </fieldset>
+          <div className="setup-action"><button className="primary-button" onClick={startGame}>Play {selectedCollection.title} <span>→</span></button><span>{selectedStats.paperCount} rounds · up to {selectedStats.maximumScore} points</span></div>
+        </section>
+
         <section className="principles">
           <article><span>01</span><h2>Observe</h2><p>Start with one unmodified figure from a real research paper.</p></article>
-          <article><span>02</span><h2>Deduce</h2><p>Choose between plausible institutions or countries.</p></article>
+          <article><span>02</span><h2>Deduce</h2><p>Choose between four plausible, real answers in six game modes.</p></article>
           <article><span>03</span><h2>Verify</h2><p>See the authors, affiliation, DOI, figure source, and license.</p></article>
         </section>
         <section className="collection-note" id="method">
           <div className="eyebrow"><span /> Collection policy</div>
-          <h2>Real papers. Traceable figures.</h2>
-          <p>This frozen {collection.label} set includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless separately credited. All {collectionFigureCount} images are unmodified publisher originals.</p>
+          <h2>Real papers. Traceable figures. Versioned sets.</h2>
+          <p>Each frozen collection includes only articles whose publication pages explicitly license the article and included figures under CC BY 4.0 unless separately credited. Collection 01 remains unchanged; Collection 02 has its own evidence archive and checksums.</p>
           <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Read the CC BY 4.0 license ↗</a>
         </section>
-        <footer className="landing-footer"><span>{collection.label}</span><span>{collectionPaperCount} papers · {collectionFigureCount} source-traceable figures</span><span><a href="/feedback">Feedback</a> · <a href="/privacy">Privacy</a></span></footer>
+        <footer className="landing-footer"><span>Paper Picture · paperpicture.net</span><span>{collectionCatalog.length} collections · {totalStats.papers} papers · {totalStats.figures} figures</span><span><a href="/feedback">Feedback</a> · <a href="/privacy">Privacy</a></span></footer>
       </main>
     );
   }
@@ -165,14 +217,14 @@ export default function Home() {
     return (
       <main className="result-shell">
         <div className="result-card">
-          <div className="eyebrow"><span /> {collection.label} complete</div>
-          <div className="score-orbit"><strong>{score}</strong><span>/ {maximumCollectionScore}</span></div>
+          <div className="eyebrow"><span /> {activeCollection.label} · {gameMode} complete</div>
+          <div className="score-orbit"><strong>{score}</strong><span>/ {gamePapers.length * 100}</span></div>
           <h1>You followed the visual evidence.</h1>
-          <p>You explored {collectionPaperCount} real CC BY research papers across geometry processing, meshing, CAD retrieval, and geometric optimization.</p>
+          <p>You explored {gamePapers.length} real CC BY research papers in {gameMode} mode.</p>
           {assistedRounds > 0 && <p className="assisted-note">Assisted game · source opened before answering in {assistedRounds} {assistedRounds === 1 ? "round" : "rounds"}.</p>}
-          <p aria-live="polite" className={`save-message ${saveState === "saved" ? "is-saved" : "is-unsaved"}`}>{saveState === "saved" ? `✓ This ${scoreClass} game is saved to your private profile.` : "This score was not saved. You can still play normally."}</p>
+          <p aria-live="polite" className={`save-message ${saveState === "saved" ? "is-saved" : "is-unsaved"}`}>{saveState === "saved" ? `✓ This ${scoreClass} game is saved to your private profile.` : "Played anonymously. Sign in through My profile before your next game if you want it saved."}</p>
           <div className="result-actions"><button className="primary-button" onClick={startGame}>Play again <span>↻</span></button><a className="secondary-button" href="/feedback">Give feedback</a><a className="secondary-button" href="/profile">View profile</a></div>
-          <button className="text-button" onClick={() => { setStarted(false); setComplete(false); }}>Back to collection</button>
+          <button className="text-button" onClick={() => { setStarted(false); setComplete(false); }}>Choose another game</button>
         </div>
       </main>
     );
@@ -185,7 +237,7 @@ export default function Home() {
       <header className="game-header">
         <button className="brand brand-button" onClick={() => setStarted(false)} aria-label="Leave game and return to collection"><span className="brand-mark">PP</span><span>Paper Picture</span></button>
         <div className="round-status"><span>ROUND {String(round + 1).padStart(2, "0")}</span><div className="progress-track" role="progressbar" aria-label="Collection progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></div><span>{String(gamePapers.length).padStart(2, "0")}</span></div>
-        <div className="header-right"><span aria-live="polite" className={`save-indicator ${saveState}`}>{saveState === "saving" || saveState === "connecting" ? "Saving…" : saveState === "unsaved" ? "Not saved" : "Saved"}</span><a href="/feedback">Feedback</a><div className="score"><span>SCORE</span><strong>{String(score).padStart(3, "0")}</strong></div></div>
+        <div className="header-right"><span className="mode-badge">{gameMode}</span><span aria-live="polite" className={`save-indicator ${saveState}`}>{saveState === "saving" || saveState === "connecting" ? "Saving…" : saveState === "unsaved" ? "Anonymous" : "Saved"}</span><a href="/feedback">Feedback</a><div className="score"><span>SCORE</span><strong>{String(score).padStart(3, "0")}</strong></div></div>
       </header>
 
       <section className="game-board">
@@ -198,18 +250,18 @@ export default function Home() {
         <div className="question-panel" id="question">
           {selected === null ? (
             <>
-              <div className="question-heading"><span className="question-index">Q{round + 1}</span><div><div className="eyebrow"><span /> {paper.questionType}</div><h1>{paper.question}</h1></div></div>
+              <div className="question-heading"><span className="question-index">Q{round + 1}</span><div><div className="eyebrow"><span /> {question?.label}</div><h1>{question?.prompt}</h1></div></div>
               <div className="answer-list">
-                {paper.options.map((option, index) => <button key={option} disabled={saveState === "connecting"} onClick={() => choose(index)}><span>{String.fromCharCode(65 + index)}</span><b>{saveState === "connecting" ? "Preparing your saved game…" : option}</b><i aria-hidden="true">↗</i></button>)}
+                {question?.options.map((option, index) => <button key={option} disabled={saveState === "connecting"} onClick={() => choose(index)}><span>{String.fromCharCode(65 + index)}</span><b>{saveState === "connecting" ? "Preparing game…" : option}</b><i aria-hidden="true">↗</i></button>)}
               </div>
               <div className="hint-row"><div><strong>{potential}</strong><span>points available</span></div><button disabled={saveState === "connecting" || reveal === paper.figures.length - 1} onClick={() => setReveal((value) => Math.min(paper.figures.length - 1, value + 1))}>Reveal next figure <span>−30 pts</span></button></div>
             </>
           ) : (
             <div className="answer-reveal">
-              <div role="status" className={`verdict ${selected === paper.correct ? "correct" : "incorrect"}`}>{selected === paper.correct ? "Correct deduction" : "Not this time"}</div>
+              <div role="status" className={`verdict ${selected === question?.correct ? "correct" : "incorrect"}`}>{selected === question?.correct ? "Correct deduction" : "Not this time"}</div>
               {sourceOpened && <p className="assisted-note">This round is recorded as assisted because the figure source was opened before answering.</p>}
               <div className="eyebrow"><span /> The paper</div><h1>{paper.title}</h1><p className="authors">{paper.authors}</p>
-              <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Published</dt><dd>{paper.journal}, {paper.year}</dd></div></dl>
+              <dl><div><dt>Institution</dt><dd>{paper.institution}</dd></div><div><dt>Country</dt><dd>{paper.country}</dd></div><div><dt>Published</dt><dd>{paper.journal}, {paper.year}</dd></div><div><dt>Topic</dt><dd>{paper.topic}</dd></div></dl>
               <div className="source-actions"><a href={paper.paperUrl} target="_blank" rel="noreferrer">Read paper ↗</a><a href={`https://doi.org/${paper.doi}`} target="_blank" rel="noreferrer">DOI ↗</a></div>
               <div className="rights-note"><span>✓</span><p><b>{figure.number} · {figure.license}</b>{figure.modifications} <a href={figure.sourceUrl} target="_blank" rel="noreferrer">Figure source</a> · <a href={paper.licenseEvidenceUrl} target="_blank" rel="noreferrer">License evidence</a></p></div>
               <button className="primary-button" disabled={saveState === "saving"} onClick={nextRound}>{saveState === "saving" ? "Saving answer…" : round === gamePapers.length - 1 ? "See final score" : "Next paper"} <span>→</span></button>

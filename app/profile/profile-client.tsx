@@ -22,6 +22,7 @@ type ProfileData = {
     roundCount: number;
     figuresRevealed: number;
     assistedCount: number;
+    gameMode: string;
     scoreClass: "casual" | "assisted";
     collectionLabel: string;
     completedAt: number;
@@ -112,7 +113,7 @@ export default function ProfileClient({ suggestedName, signOutPath, isAdmin }: {
         <div className="section-title"><div><div className="eyebrow"><span /> Recent activity</div><h2>Saved games</h2></div><Link className="primary-button" href="/">Play a new game <span>→</span></Link></div>
         {!data ? <p className="empty-history">Your game history is loading.</p> : data.recent.length === 0 ? <p className="empty-history">No completed games yet. Finish the collection and your score will appear here.</p> : (
           <div className="history-list">
-            {data.recent.map((game) => <article key={game.id}><div><b>{new Date(game.completedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}</b><span>{game.collectionLabel}</span></div><div><span className={`history-class ${game.scoreClass}`}>{game.scoreClass}{game.assistedCount ? ` · ${game.assistedCount}` : ""}</span><span>{game.correctCount}/{game.roundCount} correct</span><span>{game.figuresRevealed} figures</span><strong>{game.score}<small> / {game.maximumScore}</small></strong></div></article>)}
+            {data.recent.map((game) => <article key={game.id}><div><b>{new Date(game.completedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}</b><span>{game.collectionLabel} · {game.gameMode}</span></div><div><span className={`history-class ${game.scoreClass}`}>{game.scoreClass}{game.assistedCount ? ` · ${game.assistedCount}` : ""}</span><span>{game.correctCount}/{game.roundCount} correct</span><span>{game.figuresRevealed} figures</span><strong>{game.score}<small> / {game.maximumScore}</small></strong></div></article>)}
           </div>
         )}
       </section>

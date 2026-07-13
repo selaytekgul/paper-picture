@@ -1,3 +1,5 @@
+import { collection02, papers02 } from "./open-graphics-02";
+
 export type PaperFigure = {
   src: string;
   number: string;
@@ -30,6 +32,17 @@ export type Paper = {
   figures: PaperFigure[];
 };
 
+export type GameMode = "institution" | "country" | "author" | "venue" | "year" | "topic";
+
+export const gameModes: { id: GameMode; label: string; description: string }[] = [
+  { id: "institution", label: "Institution", description: "Match a paper to an author affiliation." },
+  { id: "country", label: "Country", description: "Locate the first listed affiliation." },
+  { id: "author", label: "Author", description: "Recognize a researcher from the figures." },
+  { id: "venue", label: "Venue", description: "Guess the publication venue." },
+  { id: "year", label: "Year", description: "Place the paper in time." },
+  { id: "topic", label: "Topic", description: "Identify the research area." },
+];
+
 const ccBy = "https://creativecommons.org/licenses/by/4.0/";
 
 export const collection = {
@@ -39,6 +52,7 @@ export const collection = {
   version: "1.0",
   label: "Open Graphics Collection 01 · v1.0",
   frozenAt: "2026-07-12",
+  description: "Geometry processing, meshing, CAD, and optimization",
 } as const;
 
 export const papers: Paper[] = [
@@ -371,6 +385,86 @@ export const collectionFigureCount = playablePapers.reduce((total, paper) => tot
 export const maximumCollectionScore = collectionPaperCount * 100;
 export const pointsForImagesSeen = (imagesSeen: number) => Math.max(10, 100 - (Math.max(1, imagesSeen) - 1) * 30);
 
+export type PaperCollection = typeof collection | typeof collection02;
+
+const isPlayable = (paper: Paper) => paper.rightsStatus === "approved" && paper.figures.length >= 2 && paper.figures.every((figure) => figure.rightsStatus === "approved");
+
+export const collectionCatalog = [collection, collection02] as const;
+export const allPapers = [...papers, ...papers02].filter(isPlayable);
+
+export function getCollection(collectionId: string): PaperCollection | undefined {
+  return collectionCatalog.find((candidate) => candidate.id === collectionId || candidate.legacyId === collectionId);
+}
+
+export function getPlayablePapers(collectionId: string) {
+  if (collectionId === collection02.id || collectionId === collection02.legacyId) return papers02.filter(isPlayable);
+  if (collectionId === collection.id || collectionId === collection.legacyId) return playablePapers;
+  return [];
+}
+
+export function collectionStats(collectionId: string) {
+  const selected = getPlayablePapers(collectionId);
+  return {
+    paperCount: selected.length,
+    figureCount: selected.reduce((total, paper) => total + paper.figures.length, 0),
+    maximumScore: selected.length * 100,
+  };
+}
+
+export type RoundQuestion = {
+  type: GameMode;
+  label: string;
+  prompt: string;
+  options: string[];
+  correct: number;
+  answer: string;
+};
+
+export function buildRoundQuestion(paper: Paper, mode: GameMode): RoundQuestion {
+  const anchorAuthor = paper.authors.split(" · ")[0];
+  const answer = answerForMode(paper, mode);
+  const candidates = unique(allPapers.map((candidate) => answerForMode(candidate, mode))).filter((candidate) => candidate !== answer);
+  const distractors = seededOrder(candidates, `${paper.id}:${mode}:distractors`).slice(0, 3);
+  const options = seededOrder([answer, ...distractors], `${paper.id}:${mode}:options`);
+  const prompts: Record<GameMode, string> = {
+    institution: `Which institution lists ${anchorAuthor} as an affiliated author?`,
+    country: `In which country is ${anchorAuthor}’s verified affiliation located?`,
+    author: "Which researcher is listed as an author of this paper?",
+    venue: "In which venue was this paper published?",
+    year: "In which year was this paper published?",
+    topic: "Which topic best describes this paper?",
+  };
+  return { type: mode, label: gameModes.find((candidate) => candidate.id === mode)?.label ?? mode, prompt: prompts[mode], options, correct: options.indexOf(answer), answer };
+}
+
+function answerForMode(paper: Paper, mode: GameMode) {
+  if (mode === "institution") return paper.institution;
+  if (mode === "country") return paper.country;
+  if (mode === "author") return paper.authors.split(" · ")[0];
+  if (mode === "venue") return paper.journal;
+  if (mode === "year") return String(paper.year);
+  return paper.topic;
+}
+
+function unique(values: string[]) {
+  return [...new Set(values)];
+}
+
+function seededOrder(values: string[], seed: string) {
+  return [...values].sort((left, right) => stableHash(`${seed}:${left}`) - stableHash(`${seed}:${right}`));
+}
+
+function stableHash(value: string) {
+  let hash = 2166136261;
+  for (const character of value) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
 export function collectionLabel(collectionId: string) {
-  return collectionId === collection.id ? collection.label : collectionId === collection.legacyId ? "Open Graphics Collection 01 · legacy" : collectionId;
+  const selected = getCollection(collectionId);
+  if (!selected) return collectionId;
+  return collectionId === selected.legacyId ? `${selected.title} · legacy` : selected.label;
 }

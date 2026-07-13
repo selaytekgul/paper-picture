@@ -1,104 +1,93 @@
 # Paper Picture project status
 
-Snapshot date: **12 July 2026**
+Snapshot date: **13 July 2026**
 
-## Production state
+## Production coordinates
 
 | Item | State |
 | --- | --- |
 | Primary URL | <https://paperpicture.net> |
-| Custom domain | Active |
-| Managed HTTPS | Active; certificate covers `paperpicture.net` |
-| Registrar DNS | METUnic `ns1.metunic.com.tr` and `ns2.metunic.com.tr` |
+| Custom domain and HTTPS | Active |
 | Hosting | OpenAI Sites |
-| Deployed site version | 9 |
-| Source commit deployed | `4b173ae58553b2c48c58ae9053d19caf39a289ed` |
-| Access policy | Public |
-| Health check | `/api/health` returns 200 and the frozen collection counts |
-| Search files | `/robots.txt` and `/sitemap.xml` return 200 |
+| Source | <https://github.com/selaytekgul/paper-picture> |
+| Access policy | Public anonymous play; identity required only for private data features |
+| Health check | `/api/health` reports collection IDs and public counts only |
+| Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
 
-The home page and game are publicly reachable. ChatGPT identity is still required for private profiles, saved progress, feedback, and owner administration.
+The Sites control plane retains saved deployment versions. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
-## Frozen content release
+## Immutable content releases
 
-- Collection ID: `open-graphics-01-v1`
-- Version: `1.0`
-- Label: `Open Graphics Collection 01 · v1.0`
-- Frozen: 12 July 2026
-- Papers: 6
-- Figures: 18
-- Maximum unassisted score: 600
-- Rights rule: explicit CC BY 4.0 article coverage, no separate third-party credit on the selected figure, verified affiliation, complete attribution
+| Collection | Frozen | Papers | Figures | Evidence |
+| --- | --- | ---: | ---: | --- |
+| `open-graphics-01-v1` / `1.0` | 12 July 2026 | 6 | 18 | `data/rights-evidence.json`, `data/RIGHTS_AUDIT.md` |
+| `open-graphics-02-v1` / `1.0` | 13 July 2026 | 6 | 18 | `data/rights-evidence-02.json`, `data/RIGHTS_AUDIT_02.md` |
 
-The paper list and exact evidence are in `data/papers.ts`, `data/rights-evidence.json`, and `data/RIGHTS_AUDIT.md`. The automated test recomputes all 18 asset hashes.
+Every collection has a maximum score of 600. All 36 shipped figure hashes are recomputed by the release test. Collection 01 was not modified when Collection 02 was introduced.
 
-## Complete product surfaces
+## Current product surfaces
 
-- Home/game route with progressive reveal and randomized paper order
-- Server-owned game sessions, attempts, completion, and score calculation
-- Assisted-game classification
-- Private player profile and recent history
-- Display-name edit and full profile/data deletion
-- Authenticated feedback/contact form
-- Owner-only feedback inbox at `/admin/feedback`
-- Feedback status management and CSV export
-- Privacy notice and tester guide
-- Health endpoint containing no player data
-- Search metadata and social preview image
-- Security and privacy response headers
+- Collection picker and six game modes: institution, country, author, venue, year, and topic
+- Progressive reveal, assisted-round classification, scoring, and complete attribution
+- Anonymous play with a clear, non-blocking saved-history fallback
+- Server-owned authenticated sessions, attempts, completion, and score calculation
+- Private player profile, history, editing, and complete data deletion
+- Authenticated feedback/contact form and owner-only inbox with status management and CSV export
+- Owner-only seven-day operational dashboard using aggregate hourly counters
+- Owner-only production backup export
+- Privacy notice, tester guide, canonical metadata, social preview, security headers, robots file, and sitemap
 
 ## Data model and retention
 
-Production D1 contains these application tables:
+Production D1 contains:
 
 - `profiles`
 - `game_sessions`
 - `round_attempts`
 - `feedback`
 - `rate_limits`
+- `operational_metrics`
 
 Retention implemented in application code:
 
 - Incomplete sessions: 7 days
 - Feedback: 365 days
 - Rate-limit counters: approximately 2 days
-- Completed sessions/profile: until the player deletes the profile
+- Aggregate operational counters: 90 days
+- Completed sessions and profiles: until player deletion
 
-Player identity is derived with `HMAC-SHA256(PROFILE_ID_SECRET, normalized email)`. Raw sign-in email, authentication tokens, IP address, and browser fingerprints are not stored in gameplay tables.
+Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized email)`. Gameplay tables do not store raw sign-in email, authentication tokens, IP address, or browser fingerprint. Operational counters store only an event name, hourly bucket, and count.
 
-## Hosted configuration that is deliberately absent from Git
+## Release evidence completed
 
-- The value of `PROFILE_ID_SECRET`
-- The value of `ADMIN_EMAIL`
-- The physical D1 database identifier and database contents
+- A private production backup was exported on 13 July and stored outside the repository with owner-only filesystem permissions.
+- Existing owner feedback was reviewed; no release-blocking product report was present.
+- Production build, lint, whitespace checks, and seven automated release tests pass.
+- All 36 rights-evidence checksums match the shipped figure files.
+- A complete anonymous country-mode game passed, including a second-figure reveal and final scoring.
+- The collection/mode picker and full landing page were visually checked at a 390-pixel mobile viewport.
+- Native controls expose button, pressed, progress, status, heading, link, and fieldset semantics; visible focus and reduced-motion styles are present.
+
+## Hosted configuration absent from Git
+
+- `PROFILE_ID_SECRET` and `ADMIN_EMAIL` values
+- Physical D1 database identifier and database contents
 - Hosting source-write credentials and owner bypass tokens
-- METUnic password, recovery information, and browser session
+- Registrar password, recovery information, and browser session
+- Private exports, tester identities, and feedback text
 
-Only configuration names and the logical `DB` binding belong in source control. Preserve the HMAC secret outside Git; changing it would disconnect existing profiles from their identities.
-
-## Validation completed for this snapshot
-
-- Production build succeeded.
-- Six automated release tests passed.
-- All 18 rights-evidence hashes matched the shipped images.
-- Git diff whitespace validation passed.
-- DNS A and TXT records resolved publicly.
-- Hosting reported domain, provider route, and SSL states as active.
-- HTTPS certificate and custom hostname were verified.
-- Production health, robots, and sitemap routes returned HTTP 200.
+Preserve the HMAC secret outside Git: replacing it would disconnect existing profiles from their identities.
 
 ## Known limitations
 
-- The six-paper collection is intentionally small.
-- Scores are suitable for casual personal progress, not competitions or prizes.
-- The correct answer exists in browser-delivered game data, so cheating is possible.
-- Retention cleanup runs when the affected player next uses the site; it is not yet a global scheduled purge.
-- There is no automated production database backup or restore drill recorded yet.
-- Cross-browser, mobile, keyboard-only, reduced-motion, and screen-reader acceptance still need a documented manual pass.
-- No analytics dashboard exists; feedback and D1 queries are the current pilot signals.
-- The public launch is an early pilot; manual cross-browser and accessibility acceptance remains important before wider promotion.
+- Each collection is intentionally small and selected for reusable figure rights, not venue completeness.
+- Scores support casual personal progress, not prizes or high-integrity competition.
+- Correct answers exist in browser-delivered content, so determined players can inspect them.
+- Retention cleanup is request-driven rather than a scheduled global job.
+- Safari, Firefox, screen-reader, and restore-drill acceptance still require owner-operated checks.
+- Aggregate monitoring is descriptive; it does not yet send alerts.
 
-## Safe handoff rule
+## Handoff rule
 
-Before changing production, read `ROADMAP.md`, `OPERATIONS.md`, and `PUBLIC_TEST_CHECKLIST.md`. For any content change, read `data/RIGHTS_AUDIT.md` and create a new collection version rather than editing `open-graphics-01-v1` in place.
+Before a production change, read `OPERATIONS.md`, `PUBLIC_TEST_CHECKLIST.md`, and `LICENSE.md`. For content changes, read both rights audits and create a new immutable collection rather than editing either current release.

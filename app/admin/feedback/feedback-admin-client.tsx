@@ -19,7 +19,14 @@ type FeedbackItem = {
 
 type FeedbackResponse = {
   feedback: FeedbackItem[];
-  collection: { id: string; label: string };
+  collections: Array<{ id: string; label: string }>;
+  error?: string;
+};
+
+type MetricsResponse = {
+  windowDays: number;
+  totals: Record<string, number>;
+  privacy: string;
   error?: string;
 };
 
@@ -27,6 +34,7 @@ const statuses: Array<FeedbackStatus | "all"> = ["all", "new", "reviewing", "res
 
 export default function FeedbackAdminClient({ signOutPath }: { signOutPath: string }) {
   const [data, setData] = useState<FeedbackResponse | null>(null);
+  const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<FeedbackStatus | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -40,10 +48,16 @@ export default function FeedbackAdminClient({ signOutPath }: { signOutPath: stri
   async function loadFeedback() {
     setError("");
     try {
-      const response = await fetch("/api/admin/feedback", { cache: "no-store" });
-      const result = await response.json() as FeedbackResponse;
-      if (!response.ok) throw new Error(result.error ?? "Could not load feedback.");
+      const [feedbackResponse, metricsResponse] = await Promise.all([
+        fetch("/api/admin/feedback", { cache: "no-store" }),
+        fetch("/api/admin/metrics", { cache: "no-store" }),
+      ]);
+      const result = await feedbackResponse.json() as FeedbackResponse;
+      const metricResult = await metricsResponse.json() as MetricsResponse;
+      if (!feedbackResponse.ok) throw new Error(result.error ?? "Could not load feedback.");
+      if (!metricsResponse.ok) throw new Error(metricResult.error ?? "Could not load operational totals.");
       setData(result);
+      setMetrics(metricResult);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load feedback.");
     }
@@ -117,6 +131,15 @@ export default function FeedbackAdminClient({ signOutPath }: { signOutPath: stri
         <article><span>Average rating</span><strong>{averageRating}<small>{ratings.length ? " / 5" : ""}</small></strong></article>
       </section>
 
+      <section className="admin-summary operations-summary" aria-label="Operational totals for the last seven days">
+        <article><span>Games started · 7d</span><strong>{metrics?.totals.game_started ?? "—"}</strong></article>
+        <article><span>Games completed · 7d</span><strong>{metrics?.totals.game_completed ?? "—"}</strong></article>
+        <article><span>Answers saved · 7d</span><strong>{metrics?.totals.attempt_saved ?? "—"}</strong></article>
+        <article><span>API errors · 7d</span><strong>{metrics?.totals.api_error ?? "—"}</strong></article>
+        <article><span>Completion rate</span><strong>{metrics && metrics.totals.game_started ? `${Math.round(((metrics.totals.game_completed ?? 0) / metrics.totals.game_started) * 100)}%` : "—"}</strong></article>
+      </section>
+      <p className="operations-privacy">{metrics?.privacy ?? "Loading privacy-safe operational totals…"}</p>
+
       <section className="admin-controls" aria-label="Feedback filters">
         <label>Search<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Message, paper, player…" /></label>
         <label>Status<select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as FeedbackStatus | "all")}>{statuses.map((status) => <option key={status} value={status}>{status === "all" ? "All statuses" : `${status} (${counts[status]})`}</option>)}</select></label>
@@ -136,7 +159,7 @@ export default function FeedbackAdminClient({ signOutPath }: { signOutPath: stri
           ))}
         </section>
       )}
-      <footer className="profile-footer"><span>{data?.collection.label ?? "Open Graphics Collection"} · Owner-only</span><span>Up to 500 newest entries · <Link href="/privacy">Privacy & data</Link></span></footer>
+      <footer className="profile-footer"><span>{data?.collections.length ?? 2} collections · Owner-only</span><span>Up to 500 newest entries · <Link href="/privacy">Privacy & data</Link></span></footer>
     </main>
   );
 }

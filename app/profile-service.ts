@@ -1,13 +1,28 @@
 import { env } from "cloudflare:workers";
-import { collection, collectionLabel, maximumCollectionScore, playablePapers, pointsForImagesSeen } from "../data/papers";
+import {
+  allPapers,
+  buildRoundQuestion,
+  collection,
+  collectionCatalog,
+  collectionLabel,
+  collectionStats,
+  gameModes,
+  getCollection,
+  getPlayablePapers,
+  pointsForImagesSeen,
+  type GameMode,
+  type Paper,
+} from "../data/papers";
 import { getChatGPTUser } from "./chatgpt-auth";
 
-const PRIVACY_VERSION = "2026-07-12-v2";
+const PRIVACY_VERSION = "2026-07-13-v3";
 const DAY = 24 * 60 * 60 * 1000;
 const ABANDONED_SESSION_RETENTION = 7 * DAY;
 const FEEDBACK_RETENTION = 365 * DAY;
 const FEEDBACK_CATEGORIES = new Set(["gameplay", "difficulty", "metadata", "copyright", "accessibility", "bug", "privacy", "other"]);
 const FEEDBACK_STATUSES = new Set(["new", "reviewing", "resolved"]);
+const METRIC_RETENTION = 90 * DAY;
+const ALLOWED_METRICS = new Set(["game_started", "attempt_saved", "game_completed", "feedback_submitted", "profile_deleted", "api_error"]);
 
 type D1Result<T> = { results?: T[]; success: boolean };
 type D1Statement = {
@@ -36,10 +51,14 @@ export function json(data: unknown, status = 200) {
   });
 }
 
-export function apiError(error: unknown) {
-  if (error instanceof ApiError) return json({ error: error.message }, error.status);
+export async function apiError(error: unknown) {
+  if (error instanceof ApiError) {
+    if (error.status >= 500) await recordMetric("api_error");
+    return json({ error: error.message }, error.status);
+  }
   if (error instanceof SyntaxError) return json({ error: "The request body is not valid JSON." }, 400);
-  const safeError = error instanceof Error ? { name: error.name, message: error.message } : { name: "UnknownError", message: "Unknown server error" };
+  await recordMetric("api_error");
+  const safeError = error instanceof Error ? { name: error.name } : { name: "UnknownError" };
   console.error(JSON.stringify({ event: "paper_picture_api_error", ...safeError }));
   return json({ error: "Something went wrong while saving your data." }, 500);
 }
@@ -104,7 +123,7 @@ async function readProfile(identity: Identity) {
   `).bind(identity.userKey).first<Record<string, number | null>>();
   const recent = await db.prepare(`
     SELECT id, collection_id AS collectionId, collection_version AS collectionVersion,
-      score_class AS scoreClass, score, maximum_score AS maximumScore,
+      game_mode AS gameMode, score_class AS scoreClass, score, maximum_score AS maximumScore,
       correct_count AS correctCount, round_count AS roundCount,
       figures_revealed AS figuresRevealed, assisted_count AS assistedCount,
       completed_at AS completedAt
@@ -117,7 +136,7 @@ async function readProfile(identity: Identity) {
   const correctAnswers = Number(stats?.correctAnswers ?? 0);
   return {
     profile,
-    collection: { id: collection.id, label: collection.label, version: collection.version },
+    collections: collectionCatalog.map((item) => ({ id: item.id, label: item.label, version: item.version })),
     stats: {
       gamesPlayed: Number(stats?.gamesPlayed ?? 0),
       bestScore: Number(stats?.bestScore ?? 0),
@@ -153,45 +172,56 @@ export async function deleteProfile(identity: Identity) {
     db.prepare("DELETE FROM game_sessions WHERE user_key = ?").bind(identity.userKey),
     db.prepare("DELETE FROM profiles WHERE user_key = ?").bind(identity.userKey),
   ]);
+  await recordMetric("profile_deleted");
 }
 
-export async function createGameSession(identity: Identity) {
+export async function createGameSession(identity: Identity, body: unknown = {}) {
   await ensureProfile(identity);
   await enforceRateLimit(identity, "game-start", 30, 60 * 60 * 1000);
+  const input = body && typeof body === "object" ? body as Record<string, unknown> : {};
+  const requestedCollectionId = typeof input.collectionId === "string" ? input.collectionId : collection.id;
+  const selectedCollection = getCollection(requestedCollectionId);
+  if (!selectedCollection) throw new ApiError(400, "Choose an available collection.");
+  const mode = typeof input.mode === "string" && gameModes.some((candidate) => candidate.id === input.mode) ? input.mode as GameMode : "institution";
+  const selectedPapers = getPlayablePapers(selectedCollection.id);
+  if (!selectedPapers.length) throw new ApiError(409, "This collection has no playable papers.");
+  const stats = collectionStats(selectedCollection.id);
   const id = crypto.randomUUID();
   const now = Date.now();
-  const paperIds = shuffledPaperIds();
+  const paperIds = shuffledPaperIds(selectedPapers);
   await getDatabase().prepare(`
     INSERT INTO game_sessions
-      (id, user_key, collection_id, collection_version, paper_order, score_class,
+      (id, user_key, collection_id, collection_version, paper_order, game_mode, score_class,
        started_at, status, score, maximum_score, correct_count, round_count,
        figures_revealed, assisted_count)
-    VALUES (?, ?, ?, ?, ?, 'casual', ?, 'started', 0, ?, 0, ?, 0, 0)
-  `).bind(id, identity.userKey, collection.id, collection.version, JSON.stringify(paperIds), now, maximumCollectionScore, playablePapers.length).run();
-  return { id, collectionId: collection.id, collectionVersion: collection.version, collectionLabel: collection.label, paperIds, scoreClass: "casual", startedAt: now };
+    VALUES (?, ?, ?, ?, ?, ?, 'casual', ?, 'started', 0, ?, 0, ?, 0, 0)
+  `).bind(id, identity.userKey, selectedCollection.id, selectedCollection.version, JSON.stringify(paperIds), mode, now, stats.maximumScore, selectedPapers.length).run();
+  await recordMetric("game_started");
+  return { id, collectionId: selectedCollection.id, collectionVersion: selectedCollection.version, collectionLabel: selectedCollection.label, mode, paperIds, scoreClass: "casual", startedAt: now };
 }
 
 export async function recordAttempt(identity: Identity, sessionId: string, body: unknown) {
   await enforceRateLimit(identity, "game-write", 240, 60 * 60 * 1000);
   if (!body || typeof body !== "object") throw new ApiError(400, "Attempt data is required.");
   const input = body as Record<string, unknown>;
-  const paper = playablePapers.find((item) => item.id === input.paperId);
+  const db = getDatabase();
+  const session = await ownedSession(db, identity.userKey, sessionId);
+  if (session.status !== "started") throw new ApiError(409, "This game is already complete.");
+  const paper = getPlayablePapers(String(session.collection_id)).find((item) => item.id === input.paperId);
   if (!paper) throw new ApiError(400, "That paper is not in this collection.");
-  if (!Number.isInteger(input.selectedOption) || Number(input.selectedOption) < 0 || Number(input.selectedOption) >= paper.options.length) {
+  const mode = validGameMode(session.game_mode);
+  const question = buildRoundQuestion(paper, mode);
+  if (!Number.isInteger(input.selectedOption) || Number(input.selectedOption) < 0 || Number(input.selectedOption) >= question.options.length) {
     throw new ApiError(400, "Select one of the available answers.");
   }
   if (!Number.isInteger(input.imagesSeen) || Number(input.imagesSeen) < 1 || Number(input.imagesSeen) > paper.figures.length) {
     throw new ApiError(400, "The number of revealed figures is invalid.");
   }
-
-  const db = getDatabase();
-  const session = await ownedSession(db, identity.userKey, sessionId);
-  if (session.status !== "started") throw new ApiError(409, "This game is already complete.");
   if (!parsePaperOrder(session.paper_order).includes(paper.id)) throw new ApiError(400, "That paper is not part of this game.");
   const selectedOption = Number(input.selectedOption);
   const imagesSeen = Number(input.imagesSeen);
   const assisted = input.assisted === true;
-  const wasCorrect = selectedOption === paper.correct;
+  const wasCorrect = selectedOption === question.correct;
   const scoreAwarded = wasCorrect ? pointsForImagesSeen(imagesSeen) : 0;
   const id = crypto.randomUUID();
   const answeredAt = Date.now();
@@ -201,7 +231,8 @@ export async function recordAttempt(identity: Identity, sessionId: string, body:
        score_awarded, images_seen, assisted, answered_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(session_id, paper_id) DO NOTHING
-  `).bind(id, sessionId, paper.id, paper.questionType, selectedOption, wasCorrect ? 1 : 0, scoreAwarded, imagesSeen, assisted ? 1 : 0, answeredAt).run();
+  `).bind(id, sessionId, paper.id, mode, selectedOption, wasCorrect ? 1 : 0, scoreAwarded, imagesSeen, assisted ? 1 : 0, answeredAt).run();
+  await recordMetric("attempt_saved");
 
   return db.prepare(`
     SELECT paper_id AS paperId, selected_option AS selectedOption,
@@ -231,6 +262,7 @@ export async function completeGameSession(identity: Identity, sessionId: string)
       correct_count = ?, figures_revealed = ?, assisted_count = ?, score_class = ?
     WHERE id = ? AND user_key = ? AND status = 'started'
   `).bind(completedAt, Number(totals?.score ?? 0), Number(totals?.correctCount ?? 0), Number(totals?.figuresRevealed ?? 0), assistedCount, assistedCount ? "assisted" : "casual", sessionId, identity.userKey).run();
+  await recordMetric("game_completed");
   return publicSession(await ownedSession(db, identity.userKey, sessionId));
 }
 
@@ -247,14 +279,18 @@ export async function submitFeedback(identity: Identity, body: unknown) {
   if (!FEEDBACK_CATEGORIES.has(category)) throw new ApiError(400, "Choose a valid feedback category.");
   if (message.length < 10 || message.length > 2000) throw new ApiError(400, "Feedback must be 10–2000 characters.");
   if (rating !== null && (!Number.isInteger(rating) || rating < 1 || rating > 5)) throw new ApiError(400, "Rating must be between 1 and 5.");
-  if (paperId && !playablePapers.some((paper) => paper.id === paperId)) throw new ApiError(400, "That paper is not in this collection.");
-  if (sessionId) await ownedSession(getDatabase(), identity.userKey, sessionId);
+  if (paperId && !allPapers.some((paper) => paper.id === paperId)) throw new ApiError(400, "That paper is not in an available collection.");
+  const session = sessionId ? await ownedSession(getDatabase(), identity.userKey, sessionId) : null;
+  const requestedCollectionId = typeof input.collectionId === "string" ? input.collectionId : session ? String(session.collection_id) : collection.id;
+  const selectedCollection = getCollection(requestedCollectionId);
+  if (!selectedCollection) throw new ApiError(400, "Choose an available collection.");
   const id = crypto.randomUUID();
   await getDatabase().prepare(`
     INSERT INTO feedback
       (id, user_key, collection_id, session_id, paper_id, category, message, rating, created_at, status)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
-  `).bind(id, identity.userKey, collection.id, sessionId, paperId, category, message, rating, Date.now()).run();
+  `).bind(id, identity.userKey, selectedCollection.id, sessionId, paperId, category, message, rating, Date.now()).run();
+  await recordMetric("feedback_submitted");
   return { id, received: true, retentionDays: 365 };
 }
 
@@ -269,13 +305,13 @@ export async function listFeedback() {
     ORDER BY f.created_at DESC
     LIMIT 500
   `).all<Record<string, unknown>>();
-  const titles = new Map(playablePapers.map((paper) => [paper.id, paper.title]));
+  const titles = new Map(allPapers.map((paper) => [paper.id, paper.title]));
   return {
     feedback: (rows.results ?? []).map((item) => ({
       ...item,
       paperTitle: typeof item.paperId === "string" ? titles.get(item.paperId) ?? item.paperId : null,
     })),
-    collection: { id: collection.id, label: collection.label },
+    collections: collectionCatalog.map((item) => ({ id: item.id, label: item.label })),
   };
 }
 
@@ -295,24 +331,26 @@ export async function updateFeedbackStatus(id: string, status: unknown) {
 export async function exportPrivateBackup() {
   await requireAdmin();
   const db = getDatabase();
-  const [profiles, sessions, attempts, feedbackRows, limits] = await Promise.all([
+  const [profiles, sessions, attempts, feedbackRows, limits, metrics] = await Promise.all([
     db.prepare("SELECT * FROM profiles ORDER BY created_at").all<Record<string, unknown>>(),
     db.prepare("SELECT * FROM game_sessions ORDER BY started_at").all<Record<string, unknown>>(),
     db.prepare("SELECT * FROM round_attempts ORDER BY answered_at").all<Record<string, unknown>>(),
     db.prepare("SELECT * FROM feedback ORDER BY created_at").all<Record<string, unknown>>(),
     db.prepare("SELECT * FROM rate_limits ORDER BY window_start").all<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM operational_metrics ORDER BY bucket_start").all<Record<string, unknown>>(),
   ]);
   return {
     format: "paper-picture-private-backup",
     formatVersion: 1,
     generatedAt: new Date().toISOString(),
-    collection: { id: collection.id, version: collection.version, label: collection.label },
+    collections: collectionCatalog.map((item) => ({ id: item.id, version: item.version, label: item.label })),
     tables: {
       profiles: profiles.results ?? [],
       game_sessions: sessions.results ?? [],
       round_attempts: attempts.results ?? [],
       feedback: feedbackRows.results ?? [],
       rate_limits: limits.results ?? [],
+      operational_metrics: metrics.results ?? [],
     },
   };
 }
@@ -340,8 +378,8 @@ async function applyRetention(db: D1Database, userKey: string, now: number) {
   ]);
 }
 
-function shuffledPaperIds() {
-  const ids = playablePapers.map((paper) => paper.id);
+function shuffledPaperIds(selectedPapers: Paper[]) {
+  const ids = selectedPapers.map((paper) => paper.id);
   for (let index = ids.length - 1; index > 0; index -= 1) {
     const random = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
     const swap = Math.floor(random * (index + 1));
@@ -368,7 +406,7 @@ function cleanDisplayName(value: string) {
 
 async function ownedSession(db: D1Database, userKey: string, sessionId: string) {
   const session = await db.prepare(`
-    SELECT id, status, collection_id, collection_version, paper_order, score_class,
+    SELECT id, status, collection_id, collection_version, paper_order, game_mode, score_class,
       score, maximum_score, correct_count, round_count, figures_revealed,
       assisted_count, completed_at
     FROM game_sessions WHERE id = ? AND user_key = ?
@@ -383,6 +421,7 @@ function publicSession(session: Record<string, unknown>) {
     status: session.status,
     collectionId: session.collection_id,
     collectionVersion: session.collection_version,
+    gameMode: validGameMode(session.game_mode),
     scoreClass: session.score_class,
     score: Number(session.score),
     maximumScore: Number(session.maximum_score),
@@ -392,6 +431,40 @@ function publicSession(session: Record<string, unknown>) {
     assistedCount: Number(session.assisted_count),
     completedAt: session.completed_at,
   };
+}
+
+function validGameMode(value: unknown): GameMode {
+  return typeof value === "string" && gameModes.some((candidate) => candidate.id === value) ? value as GameMode : "institution";
+}
+
+export async function recordMetric(metric: string) {
+  if (!ALLOWED_METRICS.has(metric)) return;
+  try {
+    const db = getDatabase();
+    const hour = 60 * 60 * 1000;
+    const bucketStart = Math.floor(Date.now() / hour) * hour;
+    await db.prepare(`
+      INSERT INTO operational_metrics (metric, bucket_start, count)
+      VALUES (?, ?, 1)
+      ON CONFLICT(metric, bucket_start) DO UPDATE SET count = count + 1
+    `).bind(metric, bucketStart).run();
+    await db.prepare("DELETE FROM operational_metrics WHERE bucket_start < ?").bind(Date.now() - METRIC_RETENTION).run();
+  } catch {
+    console.error(JSON.stringify({ event: "paper_picture_metric_write_failed" }));
+  }
+}
+
+export async function getOperationalMetrics() {
+  await requireAdmin();
+  const since = Date.now() - 7 * DAY;
+  const rows = await getDatabase().prepare(`
+    SELECT metric, bucket_start AS bucketStart, count
+    FROM operational_metrics WHERE bucket_start >= ?
+    ORDER BY bucket_start DESC, metric
+  `).bind(since).all<{ metric: string; bucketStart: number; count: number }>();
+  const totals = Object.fromEntries([...ALLOWED_METRICS].map((metric) => [metric, 0]));
+  for (const row of rows.results ?? []) totals[row.metric] = (totals[row.metric] ?? 0) + Number(row.count);
+  return { windowDays: 7, totals, hourly: rows.results ?? [], privacy: "Aggregate event counts only; no user, IP, URL, or message fields." };
 }
 
 async function hmacHex(secret: string, value: string) {

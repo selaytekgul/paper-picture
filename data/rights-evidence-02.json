@@ -1,0 +1,76 @@
+{
+  "collectionId": "open-graphics-02-v1",
+  "collectionVersion": "1.0",
+  "verifiedAt": "2026-07-13",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "method": "Each official publication page was checked for an explicit CC BY 4.0 rights statement covering included images unless separately credited. Selected captions were checked for separate third-party credits. SHA-256 identifies the unmodified local publisher asset.",
+  "papers": [
+    {
+      "id": "mesh-transformations",
+      "doi": "10.1007/s00366-025-02175-3",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-025-02175-3",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-025-02175-3#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/mesh-transformations/fig1.png", "sha256": "591824c7e9aa5ec9920f2ce8ceecaab85371664965ac1267e543f496473800dd" },
+        { "number": 5, "path": "public/papers/mesh-transformations/fig5.png", "sha256": "c0dfe45c10257343577f126db98b81988a07cbbec6aecaa5d2995b10fa1301cc" },
+        { "number": 7, "path": "public/papers/mesh-transformations/fig7.jpg", "sha256": "e3373bfb433b98a563406fda869f89986db3457b6546fb4bcc23b45388e788d0" }
+      ]
+    },
+    {
+      "id": "cad-iga-pipeline",
+      "doi": "10.1007/s00366-024-02065-0",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-024-02065-0",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-024-02065-0#rightslink",
+      "figures": [
+        { "number": 16, "path": "public/papers/cad-iga-pipeline/fig16.png", "sha256": "e0f21b3bfeef3c9d6cb5ba993ea03b22a5b4c9715b269fe2c8290198bd0f0f6b" },
+        { "number": 18, "path": "public/papers/cad-iga-pipeline/fig18.png", "sha256": "29baa4a4079860d60eae0ad1b672ba6eb083bb2734d1d7636a2df8b7834da658" },
+        { "number": 22, "path": "public/papers/cad-iga-pipeline/fig22.png", "sha256": "3bca613b4371209147d7d23e6c7756e7bb42a550ff9c15c9c7a57eb87a73d742" }
+      ]
+    },
+    {
+      "id": "deep-mesh-generation",
+      "doi": "10.1007/s44379-025-00013-3",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s44379-025-00013-3",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s44379-025-00013-3#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/deep-mesh-generation/fig1.png", "sha256": "16305b72cebc8ad54e838a412808715ffd44e286a14f830a23d756387c2e64ec" },
+        { "number": 7, "path": "public/papers/deep-mesh-generation/fig7.png", "sha256": "fa3973436124caccd1de6916e8dbf19249f1fa8966cbc0a5eaa4eafbacdc4130" },
+        { "number": 8, "path": "public/papers/deep-mesh-generation/fig8.png", "sha256": "5e519e90519fa8fb5d5917e2714c20d4fa11fc31cdd84d156aa63b4d58c1933a" }
+      ]
+    },
+    {
+      "id": "nurbs-nefem",
+      "doi": "10.1007/s00366-024-02004-z",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-024-02004-z",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-024-02004-z#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/nurbs-nefem/fig1.png", "sha256": "5c49e1b691e54447e09bf4a7ad86dc917ed2a3c0538c7cde469ab78778ba66a9" },
+        { "number": 14, "path": "public/papers/nurbs-nefem/fig14.png", "sha256": "7fe431c40ac8d337d23cf91479d22d60ea347e4925047cd25f9214f0bc1bd7e7" },
+        { "number": 27, "path": "public/papers/nurbs-nefem/fig27.png", "sha256": "67d108c4aecde171c0ff86b4f59399a447fb271ef50c8b4aa2821c6a7cffd25c" }
+      ]
+    },
+    {
+      "id": "boundary-matching",
+      "doi": "10.1007/s00366-024-02020-z",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-024-02020-z",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-024-02020-z#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/boundary-matching/fig1.png", "sha256": "ede0ecbe6b279fc44c90814179df7061f8472a7b200b3391bfae0b0c7f6aaee6" },
+        { "number": 11, "path": "public/papers/boundary-matching/fig11.png", "sha256": "d6eba3bdbfdbd0a4370fab95397d4e2d97d8077ca34f2a864aac25066ab724e0" },
+        { "number": 12, "path": "public/papers/boundary-matching/fig12.png", "sha256": "2e2d4ea7c36d8304e5026f214a751f464a85151d07b354b462863771b9a1d411" }
+      ]
+    },
+    {
+      "id": "ml-flow-adaptation",
+      "doi": "10.1007/s00366-024-01950-y",
+      "publicationUrl": "https://link.springer.com/article/10.1007/s00366-024-01950-y",
+      "licenseEvidenceUrl": "https://link.springer.com/article/10.1007/s00366-024-01950-y#rightslink",
+      "figures": [
+        { "number": 1, "path": "public/papers/ml-flow-adaptation/fig1.png", "sha256": "f0ce30fa067a66e16503a435883e016e42cf90c5676186efc23d4c85e612463f" },
+        { "number": 10, "path": "public/papers/ml-flow-adaptation/fig10.png", "sha256": "3b876b0ca5da8b65aa6e00ae980acc8956d57966b6d61c0c7ac4eab4c1770224" },
+        { "number": 14, "path": "public/papers/ml-flow-adaptation/fig14.png", "sha256": "eaddf969412fc031d0860d51545d4be4e3d5aa516419dd4a2de0a838af3afac6" }
+      ]
+    }
+  ]
+}

@@ -2,9 +2,11 @@ import { apiError, createGameSession, json, requireIdentity } from "../../profil
 
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    return json(await createGameSession(await requireIdentity()), 201);
+    const text = await request.text();
+    const body = text ? JSON.parse(text) : {};
+    return json(await createGameSession(await requireIdentity(), body), 201);
   } catch (error) {
     return apiError(error);
   }

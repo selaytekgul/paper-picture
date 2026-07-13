@@ -1,52 +1,64 @@
 # Public test checklist
 
-## Infrastructure completed
+## Release infrastructure
 
-- [x] Real, license-reviewed six-paper collection is frozen.
-- [x] Profiles, saved games, deletion, feedback, and owner inbox are deployed.
-- [x] `paperpicture.net` DNS, routing, canonical metadata, and HTTPS are active.
-- [x] Production health, robots, and sitemap checks pass.
-- [x] Public outer access is enabled; private data surfaces still require ChatGPT identity.
+- [x] Two separately versioned, rights-reviewed collections are frozen.
+- [x] Six game modes are available.
+- [x] Anonymous play, optional profiles, saved games, deletion, feedback, owner inbox, and aggregate monitoring are implemented.
+- [x] `paperpicture.net` DNS, HTTPS, canonical metadata, robots, and sitemap are active.
+- [x] Public outer access is enabled; private data routes require ChatGPT identity.
+- [x] A production backup was exported and stored privately outside GitHub.
 
-## Before sending to one friend
+## Automated acceptance
 
-- [ ] Complete one full owner game on `paperpicture.net` after the domain launch.
-- [ ] Submit and resolve one feedback item through the production owner inbox.
-- [ ] Create and privately store a D1 snapshot.
-- [x] Public outer access was explicitly approved for the friend pilot.
-- [ ] Record the tester name/contact privately, test dates, and what feedback is requested.
-- [ ] Confirm the friend can enter, play, save, open their private profile, submit feedback, and delete their data.
+- [x] Production build passes.
+- [x] Seven release tests pass.
+- [x] All 36 image checksums match both rights archives.
+- [x] Lint and whitespace checks pass.
+- [x] Health output contains public collection data only.
+- [x] Metrics endpoint is owner-only and aggregate-only.
 
-## Private acceptance
+## Browser acceptance completed
 
-- [ ] Complete two games with different randomized paper orders.
-- [ ] Confirm correct, incorrect, first-clue, second-clue, and third-clue scoring.
-- [ ] Open a figure source before answering and confirm the game is labeled assisted.
-- [ ] Confirm collection version and per-game maximum score in history.
-- [ ] Submit gameplay, accessibility, metadata, and copyright feedback.
-- [ ] Check mobile, desktop, keyboard-only, reduced-motion, Chrome, Safari, and Firefox.
-- [ ] Delete a test profile and verify all related database tables are empty for that identity.
-- [ ] Create a private D1 snapshot.
+- [x] Select Collection 02 and country mode.
+- [x] Complete all six anonymous rounds.
+- [x] Reveal a second figure and receive 70 points for that round.
+- [x] See paper, author, affiliation, venue, year, DOI, source, and license after answering.
+- [x] Reach the final result state at 570/600 and see the anonymous-save explanation.
+- [x] Inspect the complete landing/setup page at 390 × 844.
+- [x] Confirm responsive one-column pickers, readable labels, visible focus styles, and reduced-motion CSS.
 
-## Audience decision
+## Owner acceptance after deployment
 
-Selected for the current pilot:
+- [ ] Save one game in each collection and confirm mode labels in private history.
+- [ ] Exercise an incorrect answer, third-figure reveal, and assisted source-open state.
+- [ ] Submit one new feedback item, change its status, and privately export the CSV.
+- [ ] Confirm the seven-day owner totals load without player identifiers.
+- [ ] Delete a disposable test profile and verify related data is removed.
+- [ ] Confirm the backup endpoint still includes all six tables after migration.
 
-- [ ] Invite-only pilot: provide 5–15 active workspace-user email addresses for the allowlist.
-- [ ] Workspace pilot: explicitly approve access for the entire workspace.
-- [x] Public pilot: public reachability is approved; ChatGPT identity remains required for profiles, saves, and feedback.
+## Compatibility still to record
 
-## Pilot operation
+- [ ] Safari desktop/mobile
+- [ ] Firefox desktop
+- [ ] Keyboard-only complete game in a physical browser session
+- [ ] Reduced-motion operating-system setting
+- [ ] VoiceOver or another screen reader
 
-- [ ] Name a person responsible for feedback and takedown triage.
-- [ ] Define the start date, end date, and tester count.
-- [ ] Review starts, completions, assisted games, feedback ratings, and reported issues.
-- [ ] Pause access immediately for a material privacy, data-integrity, or rights issue.
-- [ ] Do not change the frozen collection during the pilot; publish a new version instead.
+## Friend pilot brief
+
+- [ ] Invite 1–5 friends for the first pass.
+- [ ] Privately record test dates and contacts.
+- [ ] Ask testers to try different collection/mode combinations.
+- [ ] Ask about confusing figures, answer wording, affiliation accuracy, accessibility, privacy, and rights concerns.
+- [ ] Review aggregate starts/completions and owner feedback after the test window.
+- [ ] Publish only anonymized findings.
 
 ## Success gate
 
-- Players can finish and save the collection without assistance.
+- Players can enter and finish without explanation.
+- Saved games work when a player chooses to sign in.
 - Metadata and attribution corrections are resolved.
 - No unresolved critical accessibility, privacy, copyright, or data-loss issue remains.
-- The owner explicitly approves the next access expansion.
+- A tested private backup can be restored.
+- The owner explicitly approves audience expansion.

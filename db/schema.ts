@@ -16,6 +16,7 @@ export const gameSessions = sqliteTable("game_sessions", {
   collectionId: text("collection_id").notNull(),
   collectionVersion: text("collection_version").notNull().default("legacy"),
   paperOrder: text("paper_order").notNull().default("[]"),
+  gameMode: text("game_mode").notNull().default("institution"),
   scoreClass: text("score_class").notNull().default("casual"),
   startedAt: integer("started_at").notNull(),
   completedAt: integer("completed_at"),
@@ -72,4 +73,13 @@ export const rateLimits = sqliteTable("rate_limits", {
   requestCount: integer("request_count").notNull().default(1),
 }, (table) => [
   index("rate_limits_user_window_idx").on(table.userKey, table.windowStart),
+]);
+
+export const operationalMetrics = sqliteTable("operational_metrics", {
+  metric: text("metric").notNull(),
+  bucketStart: integer("bucket_start").notNull(),
+  count: integer("count").notNull().default(1),
+}, (table) => [
+  uniqueIndex("operational_metrics_metric_bucket_unique").on(table.metric, table.bucketStart),
+  index("operational_metrics_bucket_idx").on(table.bucketStart),
 ]);

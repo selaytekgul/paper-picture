@@ -1,75 +1,66 @@
 # Paper Picture roadmap
 
-This roadmap starts from the production snapshot on 12 July 2026. The current site and portfolio repository are public.
+This roadmap starts from the two-collection release prepared on 13 July 2026. The website and portfolio repository are public; profiles and feedback remain private.
 
-## P0 — Before sending the link to a friend
+## Completed foundation
 
-1. **Run one owner acceptance game on `paperpicture.net`.**
-   - Complete all six rounds.
-   - Exercise correct and incorrect answers and all three reveal levels.
-   - Open a figure source and confirm the round/game is marked assisted.
-   - Confirm the result appears in the private profile.
-2. **Test the feedback loop.**
-   - Submit feedback as a player.
-   - Confirm it appears in `/admin/feedback` for the owner.
-   - Change its status and export a CSV.
-   - Store the export privately and delete it when no longer needed.
-3. **Create a production D1 snapshot.**
-   - Keep it outside GitHub.
-   - Record its timestamp, collection ID, and deployed version in a private release record.
-4. **Run the manual compatibility pass.**
-   - Mobile and desktop
-   - Chrome, Safari, and Firefox
-   - Keyboard-only navigation
-   - Reduced motion and basic screen-reader labels
-5. **Send a short tester brief.**
-   - Explain the progressive reveal and assisted-game label.
-   - Ask the friend to report confusing images, wrong affiliations, accessibility issues, and rights concerns through the feedback form.
+- Custom domain, managed HTTPS, canonical metadata, robots, and sitemap
+- Two immutable, rights-reviewed collections with 12 papers and 36 figures
+- Six modes: institution, country, author, venue, year, and topic
+- Anonymous play plus optional private profiles and server-verified saved games
+- Feedback/contact flow and owner triage/CSV inbox
+- Private production backup export and one verified snapshot
+- Aggregate-only owner metrics for starts, completions, attempts, feedback, deletion, and server errors
+- Public repository showcase, architecture, rights records, runbook, and worklogs
 
-## P1 — First friend pilot
+## P0 — First friend pilot
 
-- Keep the pilot to 1–5 people for the first pass.
-- Define a start/end date and a person responsible for feedback and takedowns.
-- Review completion, save failures, assisted games, feedback categories, and ratings.
-- Fix P0/P1 bugs without changing the frozen paper collection.
-- Return to owner-only immediately for a material privacy, rights, or data-integrity issue.
-- Write a short pilot outcome note: what players understood, where they hesitated, and whether the core guessing loop was enjoyable.
+1. Send <https://paperpicture.net> to 1–5 friends with a short test brief.
+2. Ask each tester to try a different collection and mode, reveal at least one extra figure, and use the feedback form.
+3. Privately record test dates and contact details; do not put names or feedback text in GitHub.
+4. Review the owner dashboard after the pilot and distinguish product problems from expected anonymous save failures.
+5. Fix release-blocking accessibility, factual, rights, privacy, or data-loss issues immediately.
+6. Write a short anonymized outcome note: what players understood, where they hesitated, and whether the loop was enjoyable.
+
+## P1 — Compatibility and operations
+
+- Run owner acceptance in Safari and Firefox.
+- Complete a screen-reader pass for setup, round, reveal, answer, and result states.
+- Verify authenticated save, profile history, feedback, status update, export, and profile deletion after this schema release.
+- Establish encrypted recurring D1 backups and perform a documented restore drill.
+- Add alerting only after enough aggregate traffic exists to define a meaningful error or completion baseline.
+- Move retention cleanup to a scheduled global job.
 
 ## P2 — Content expansion
 
-- Build a candidate queue of 15–30 papers with explicit reusable figure licenses.
-- Add venue/year/topic metadata while keeping license eligibility as the hard gate.
-- Expand through new immutable collections, for example `open-graphics-02-v1`.
-- Add double review for affiliation correctness, distractors, captions, alt text, and third-party material.
+- Build a rights-first candidate queue across SGP, SPM, SMI, Eurographics, Pacific Graphics, SIGGRAPH/TOG, SIGGRAPH Asia, CAD/Graphics, GMP, C&G, TVCG, CGF, The Visual Computer, Engineering with Computers, and related geometry venues.
+- Treat venue membership only as discovery; explicit reusable figure rights remain the hard gate.
+- Add double review for affiliation, answer wording, distractors, captions, alternative text, and third-party material.
 - Consider author-submitted figure packs with explicit permission and a standard contribution agreement.
-- Candidate venues include SIGGRAPH/TOG, SIGGRAPH Asia, SGP, SPM, SMI, Eurographics, Pacific Graphics, 3DV, CVPR/ICCV/ECCV 3D tracks, CAD/Graphics, GMP, Shape Modeling, C&G, TVCG, CGF, The Visual Computer, Engineering with Computers, and SIAM geometry-related publications—but venue membership never substitutes for image rights.
+- Publish all additions as new immutable collection versions.
 
-## P3 — Product improvements
+## P3 — Game depth
 
-- Add collection, topic, year, venue, institution, and country modes.
-- Add difficulty calibration using pilot answer/reveal data.
-- Add a “paper of the day” or short three-round mode.
-- Add clearer onboarding before the first round.
-- Add a post-game learning view with topics, abstracts, and properly attributed paper links.
-- Add opt-in achievements only after deciding whether they add educational value.
-- Keep profiles private unless a separate moderation and consent design is approved.
+- Add a short three-round mode and paper-of-the-day experience.
+- Calibrate difficulty from aggregate reveal/completion patterns and tester feedback.
+- Add a post-game learning view with abstracts or short curator summaries and attributed links.
+- Consider opt-in achievements only if they improve learning.
+- Improve answer secrecy before any competitive feature.
 
-## P4 — Reliability and governance
+## Governance before wider promotion
 
-- Automate scheduled global retention cleanup.
-- Establish recurring encrypted D1 backups and perform a restore drill.
-- Add privacy-safe operational metrics and alerting for 5xx responses and save failures.
-- Add a curator workflow that cannot publish an item without completed rights evidence.
-- Add structured content review and collection-version migration tests.
-- Document incident, takedown, correction, and contributor-response service levels.
-- Review the privacy notice and data-processing posture before a wider public launch.
+- Curator workflow that cannot publish incomplete rights evidence
+- Incident, takedown, correction, and contributor-response targets
+- Privacy and data-processing review
+- Accessibility acceptance record
+- Tested backup restoration and owner succession notes
 
 ## Explicitly deferred
 
-- Public leaderboards, prizes, or competitive rankings
-- Independent passwords or custom identity storage
-- Social profiles, messaging, comments, follows, and uploads
-- Scraping figures from papers without explicit reuse rights
-- Editing the current frozen collection in place
+- Public leaderboards, prizes, or high-stakes rankings
+- Public player profiles, comments, messaging, follows, or uploads
+- Independent passwords or custom authentication storage
+- Scraping figures without explicit reuse rights
+- Editing a frozen collection in place
 
-These require stronger answer secrecy, moderation, abuse prevention, consent, and governance than the current educational MVP.
+These require stronger answer security, moderation, abuse prevention, consent, or governance than the present educational release.

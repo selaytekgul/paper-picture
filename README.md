@@ -1,45 +1,62 @@
 # Paper Picture
 
-Paper Picture is a visual research game: players see progressively revealed figures from real computer-graphics and digital-geometry papers and guess an author affiliation, university, or country.
+[Paper Picture](https://paperpicture.net) is a visual research game: players study progressively revealed figures from real computer-graphics and digital-geometry papers, then identify an author, institution, country, venue, year, or topic.
 
-The live MVP uses a frozen, license-reviewed collection. It contains no fictional papers or institutions.
+Every playable figure has a publisher source, article-level reuse evidence, a figure-credit review, descriptive alternative text, and a recorded SHA-256 checksum. The application contains no fictional papers, authors, or affiliations.
 
-## Current release
+![Paper Picture collection and mode picker](docs/assets/paper-picture-home.png)
 
-- Production: <https://paperpicture.net>
-- Access: public; profiles, saved games, and feedback still use ChatGPT identity
-- Collection: `Open Graphics Collection 01 · v1.0`
-- Content: 6 papers and 18 figures
-- Figure rights: article-level CC BY 4.0 plus a figure-level credit check
-- Profiles: private, ChatGPT-identified, pseudonymous in the gameplay database
-- Feedback: authenticated submission plus an owner-only review and CSV-export inbox
-- Hosting: OpenAI Sites with Cloudflare Workers-compatible vinext output and D1
+## Live release
 
-The temporary Sites URL remains available as a fallback, but canonical metadata, the sitemap, and public documentation use `paperpicture.net`.
+- Website: <https://paperpicture.net>
+- Content: 2 immutable collections, 12 papers, and 36 figures
+- Modes: institution, country, author, venue, year, and topic
+- Play: anonymous by default; sign in only to save private history or send feedback
+- Figure rights: CC BY 4.0 article coverage plus a selected-figure credit check
+- Hosting: OpenAI Sites, Cloudflare Workers-compatible vinext output, and D1
 
-## What is implemented
+Collection 01’s paper records, figure assets, and rights evidence remain unchanged. Collection 02 is a separately versioned, rights-reviewed release, so existing saved games keep their original context.
 
-- Progressive one-, two-, and three-figure reveal
-- Institution and country questions with randomized paper order
-- Server-recalculated scores: 100, 70, or 40 points for a correct answer
-- Assisted-round marking when a player opens a figure source before answering
-- Private profiles, saved game history, profile editing, and complete data deletion
-- Rate limits and retention for incomplete sessions, feedback, and counters
-- Feedback categories for gameplay, accessibility, metadata, privacy, bugs, and copyright
-- Owner-only feedback triage with status filters and CSV export
-- Rights evidence with asset hashes and a fail-closed playable collection
-- Privacy notice, tester guide, canonical metadata, social preview, robots file, and sitemap
-- Security headers, no-store authenticated responses, and private player data
+![A Paper Picture country-mode round](docs/assets/paper-picture-round.jpg)
+
+![Paper Picture picker-to-round preview](docs/assets/paper-picture-tour.gif)
+
+## Product features
+
+- One-, two-, and three-figure progressive reveal
+- Deterministic four-option questions across six game modes
+- Server-recalculated scores of 100, 70, or 40 points
+- Assisted-round marking when a figure source is opened before answering
+- Full paper, author, affiliation, DOI, figure-source, and license reveal
+- Private profiles, saved game history, display-name editing, and complete deletion
+- Authenticated feedback with an owner-only triage and CSV-export inbox
+- Owner-only seven-day operational totals using aggregate hourly counters
+- No advertising analytics, public profiles, leaderboard, or cross-site tracking
+- Versioned rights evidence with automated image-hash verification
+- Responsive, keyboard-focused UI with reduced-motion support
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["Choose collection + mode"] --> B["Reveal a licensed figure"]
+    B --> C["Pick one of four real answers"]
+    C --> D["Server verifies saved attempts"]
+    C --> E["Reveal paper + attribution"]
+    D --> F["Private profile history"]
+```
+
+The full system and trust-boundary diagram is in [Architecture](docs/ARCHITECTURE.md).
 
 ## Technology
 
 - Next.js-compatible app routes rendered by [vinext](https://github.com/cloudflare/vinext)
-- React and TypeScript
+- React 19 and TypeScript
 - Cloudflare Workers runtime
 - Cloudflare D1 with Drizzle schema and migrations
 - OpenAI Sites hosting and Sign in with ChatGPT identity headers
 
-## Local setup
+## Local development
 
 Prerequisite: Node.js `>=22.13.0`.
 
@@ -48,49 +65,50 @@ npm install
 npm run dev
 ```
 
-Useful checks:
+Release checks:
 
 ```bash
-npm run build
-node --test tests/rendered-html.test.mjs
+npm test
 npm run lint
+git diff --check
 ```
 
-Local authenticated/profile flows require runtime bindings that mirror production. The production-only values are managed by the hosting control plane and must not be committed.
+Local anonymous play works without a database. Authenticated profile, saved-game, feedback, metrics, and owner flows require runtime bindings that mirror production:
 
-Required runtime names:
+- `DB`: logical D1 binding declared in `.openai/hosting.json`
+- `PROFILE_ID_SECRET`: HMAC secret used to derive pseudonymous player keys
+- `ADMIN_EMAIL`: owner identity allowed to review feedback and operational totals
 
-- `DB`: D1 binding declared logically in `.openai/hosting.json`
-- `PROFILE_ID_SECRET`: durable HMAC secret for deriving pseudonymous player keys
-- `ADMIN_EMAIL`: owner identity allowed to review feedback
+Production values are managed by the hosting control plane and must never be committed.
 
-## Important project locations
+## Repository map
 
-- `app/`: pages, game UI, authenticated APIs, profile service, feedback inbox
-- `data/papers.ts`: frozen playable paper and figure records
-- `data/rights-evidence.json`: machine-readable source and asset-hash evidence
-- `data/RIGHTS_AUDIT.md`: human-reviewed rights record
-- `db/schema.ts`: application data model
-- `drizzle/`: generated D1 migrations
-- `public/papers/`: approved publisher-provided figures
-- `tests/rendered-html.test.mjs`: release invariants and rights-hash checks
+- `app/`: game UI, pages, authenticated APIs, profile service, and owner inbox
+- `data/papers.ts`: Collection 01, collection registry, and mode question builder
+- `data/open-graphics-02.ts`: immutable Collection 02 records
+- `data/rights-evidence*.json`: machine-readable source evidence and asset hashes
+- `data/RIGHTS_AUDIT*.md`: human-reviewed inclusion records
+- `db/schema.ts` and `drizzle/`: D1 model and generated migrations
+- `public/papers/`: approved, publisher-provided figures
+- `tests/rendered-html.test.mjs`: release, privacy, collection, and rights invariants
 
 ## Documentation
 
+- [Architecture and data boundaries](docs/ARCHITECTURE.md)
 - [Current status and handoff](PROJECT_STATUS.md)
+- [13 July 2026 release worklog](docs/WORKLOG_2026-07-13.md)
+- [Operations, backup, and rollback](OPERATIONS.md)
+- [Public test checklist](PUBLIC_TEST_CHECKLIST.md)
 - [Prioritized roadmap](ROADMAP.md)
-- [12 July 2026 work log](docs/WORKLOG_2026-07-12.md)
-- [Operations and rollback](OPERATIONS.md)
-- [Friend/public test checklist](PUBLIC_TEST_CHECKLIST.md)
-- [Domain operations](DOMAIN_SETUP.md)
-- [Rights audit](data/RIGHTS_AUDIT.md)
+- [Collection 01 rights audit](data/RIGHTS_AUDIT.md)
+- [Collection 02 rights audit](data/RIGHTS_AUDIT_02.md)
 - [Repository and figure rights](LICENSE.md)
 
-## Safety rules
+## Safety and contribution rules
 
-- Never commit production database exports, player feedback, raw emails, runtime secrets, source-repository credentials, browser data, or registrar recovery codes.
-- Do not alter the frozen collection in place. A paper, figure, answer, or scoring-content change requires a new collection ID and version.
-- Do not add a figure without article-level license evidence, a figure-level third-party credit check, attribution, alternative text, and an updated asset hash.
-- Keep player records, feedback exports, database snapshots, and hosted configuration out of the public repository.
+- Never commit production exports, feedback text, raw emails, secrets, browser data, registrar credentials, or source-write credentials.
+- Never edit a frozen collection in place. Content or answer changes require a new collection ID and version.
+- Never add a figure without explicit license evidence, a separate-credit review, attribution, alternative text, and an updated checksum.
+- Keep profiles private unless a separate consent, moderation, and abuse-prevention design is approved.
 
-This repository preserves source and operational knowledge. It is not a backup of private player data or hosted secrets.
+This is a public portfolio repository, but no open-source license is currently granted for the original Paper Picture code, visual design, or documentation. See [LICENSE.md](LICENSE.md). Third-party research figures retain their recorded CC BY 4.0 terms.
