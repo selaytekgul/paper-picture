@@ -35,10 +35,10 @@
 
 - [x] Complete production sign-in with Google and GitHub; retain the existing native ChatGPT path.
 - [x] Confirm matching verified emails reach the same private profile, different verified emails remain isolated, and sign-out clears the selected provider session.
-- [ ] Save one game in each collection and confirm mode labels in private history.
-- [ ] Exercise an incorrect answer, third-figure reveal, and assisted source-open state.
-- [ ] Submit one new feedback item, change its status, and privately export the CSV.
-- [ ] Confirm the seven-day owner totals load without player identifiers.
+- [x] Save one game in each collection and confirm mode labels in private history.
+- [x] Exercise an incorrect answer, third-figure reveal, and assisted source-open state.
+- [x] Submit one new feedback item, change its status, and privately export the CSV.
+- [x] Confirm the seven-day owner totals load without player identifiers.
 - [ ] Delete a disposable test profile and verify related data is removed.
 - [ ] Confirm the backup endpoint still includes all six tables after migration.
 
