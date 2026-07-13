@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { chatGPTSignOutPath, requireChatGPTUser } from "../chatgpt-auth";
+import { requireCurrentUser, signOutDestination } from "../auth-service";
 import FeedbackClient from "./feedback-client";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function FeedbackPage() {
-  await requireChatGPTUser("/feedback");
-  return <FeedbackClient signOutPath={chatGPTSignOutPath("/")} />;
+  const user = await requireCurrentUser("/feedback");
+  return <FeedbackClient authProvider={user.provider} signOutDestination={signOutDestination(user.provider)} />;
 }

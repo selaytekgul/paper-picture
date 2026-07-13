@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { chatGPTSignOutPath, requireChatGPTUser } from "../chatgpt-auth";
+import { requireCurrentUser, signOutDestination } from "../auth-service";
 import { isAdminEmail } from "../profile-service";
 import ProfileClient from "./profile-client";
 
@@ -10,6 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfilePage() {
-  const user = await requireChatGPTUser("/profile");
-  return <ProfileClient suggestedName={user.fullName ?? "Researcher"} signOutPath={chatGPTSignOutPath("/")} isAdmin={isAdminEmail(user.email)} />;
+  const user = await requireCurrentUser("/profile");
+  return <ProfileClient suggestedName={user.fullName ?? "Researcher"} authProvider={user.provider} signOutDestination={signOutDestination(user.provider)} isAdmin={isAdminEmail(user.email)} />;
 }

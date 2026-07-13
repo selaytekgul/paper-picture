@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: ["/", "/privacy", "/test-guide"],
-      disallow: ["/api/", "/feedback", "/profile"],
+      disallow: ["/api/", "/auth/", "/admin/", "/feedback", "/profile", "/sign-in"],
     },
     sitemap: "https://paperpicture.net/sitemap.xml",
   };

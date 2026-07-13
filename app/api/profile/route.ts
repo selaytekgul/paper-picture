@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json() as { displayName?: unknown };
     return json(await updateProfile(await requireIdentity(), body?.displayName));
   } catch (error) {
     return apiError(error);

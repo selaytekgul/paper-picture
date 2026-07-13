@@ -43,7 +43,7 @@ function localShuffle(papers: Paper[]) {
 
 export default function Home() {
   const defaultCollection = collectionCatalog[1] ?? collectionCatalog[0];
-  const [selectedCollectionId, setSelectedCollectionId] = useState(defaultCollection.id);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(defaultCollection.id);
   const [selectedMode, setSelectedMode] = useState<GameMode>("institution");
   const [gameMode, setGameMode] = useState<GameMode>("institution");
   const [started, setStarted] = useState(false);

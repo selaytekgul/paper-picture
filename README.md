@@ -54,7 +54,7 @@ The full system and trust-boundary diagram is in [Architecture](docs/ARCHITECTUR
 - React 19 and TypeScript
 - Cloudflare Workers runtime
 - Cloudflare D1 with Drizzle schema and migrations
-- OpenAI Sites hosting and Sign in with ChatGPT identity headers
+- OpenAI Sites hosting, native ChatGPT identity headers, and portable Auth.js OAuth
 
 ## Local development
 
@@ -70,6 +70,7 @@ Release checks:
 ```bash
 npm test
 npm run lint
+npm run typecheck
 git diff --check
 ```
 
@@ -78,6 +79,9 @@ Local anonymous play works without a database. Authenticated profile, saved-game
 - `DB`: logical D1 binding declared in `.openai/hosting.json`
 - `PROFILE_ID_SECRET`: HMAC secret used to derive pseudonymous player keys
 - `ADMIN_EMAIL`: owner identity allowed to review feedback and operational totals
+- `AUTH_SECRET`: Auth.js cookie and token signing secret
+- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET`: Google OAuth application credentials
+- `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET`: GitHub OAuth application credentials
 
 Production values are managed by the hosting control plane and must never be committed.
 
@@ -95,6 +99,7 @@ Production values are managed by the hosting control plane and must never be com
 ## Documentation
 
 - [Architecture and data boundaries](docs/ARCHITECTURE.md)
+- [Authentication setup and provider callbacks](docs/AUTH_SETUP.md)
 - [Current status and handoff](PROJECT_STATUS.md)
 - [13 July 2026 release worklog](docs/WORKLOG_2026-07-13.md)
 - [Operations, backup, and rollback](OPERATIONS.md)

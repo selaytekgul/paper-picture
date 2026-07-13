@@ -16,7 +16,8 @@ button { color:inherit; }
 .brand-mark { width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:var(--ink); color:var(--cream); font:700 11px/1 Arial; letter-spacing:.08em; }
 .nav-note { font:600 11px/1.2 monospace; text-transform:uppercase; letter-spacing:.12em; }
 .topbar-actions,.profile-nav-actions,.header-right { display:flex; align-items:center; gap:24px; }
-.topbar-actions a,.profile-nav-actions a,.header-right>a,.legal-shell nav>a { color:var(--ink); font:700 10px/1 monospace; text-transform:uppercase; letter-spacing:.08em; text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:3px; }
+.topbar-actions a,.profile-nav-actions a,.profile-nav-actions .nav-link-button,.header-right>a,.legal-shell nav>a { color:var(--ink); font:700 10px/1 monospace; text-transform:uppercase; letter-spacing:.08em; text-decoration:none; border:0; border-bottom:1px solid currentColor; border-radius:0; padding:0 0 3px; background:transparent; cursor:pointer; }
+.profile-nav-actions .nav-link-button:disabled { cursor:wait; opacity:.55; }
 .hero { min-height:650px; display:grid; grid-template-columns:1.08fr .92fr; align-items:center; gap:7vw; padding:64px 4vw 70px; }
 .eyebrow { display:flex; align-items:center; gap:9px; font:700 11px/1.2 monospace; text-transform:uppercase; letter-spacing:.13em; }
 .eyebrow span { width:22px; height:1px; background:currentColor; }
@@ -181,6 +182,26 @@ button { color:inherit; }
 .profile-footer { display:flex; justify-content:space-between; margin:48px 4vw 0; padding-top:20px; border-top:1px solid var(--line); color:#6a7771; font:700 9px monospace; text-transform:uppercase; }
 .profile-footer a { color:var(--green); }
 
+.auth-shell { min-height:100vh; padding:0 7vw 70px; background:radial-gradient(circle at 78% 18%,rgba(203,231,215,.8),transparent 31%),var(--paper); }
+.auth-card { width:min(620px,100%); margin:0 auto; padding:72px 0 30px; }
+.auth-card h1 { margin:20px 0; font:500 clamp(52px,7vw,82px)/.93 Georgia,serif; letter-spacing:-.06em; }
+.auth-card>p { color:#53615b; font:16px/1.65 Georgia,serif; }
+.auth-options { display:grid; gap:10px; margin:36px 0 27px; }
+.auth-option { width:100%; min-height:70px; display:grid; grid-template-columns:80px 1fr 20px; align-items:center; gap:18px; padding:0 22px; border:1px solid var(--ink); border-radius:0; background:var(--cream); color:var(--ink); text-align:left; text-decoration:none; cursor:pointer; transition:.18s ease; }
+.auth-option:hover:not(:disabled) { transform:translateY(-2px); box-shadow:4px 4px 0 var(--ink); }
+.auth-option span { font:700 9px/1.2 monospace; text-transform:uppercase; letter-spacing:.09em; color:#64716b; }
+.auth-option b { font-size:14px; }
+.auth-option i { font-style:normal; font-size:20px; }
+.auth-option.chatgpt { background:var(--ink); color:white; }
+.auth-option.chatgpt span { color:var(--mint); }
+.auth-option.github { background:#24292f; color:white; }
+.auth-option.github span { color:#c7cdd2; }
+.auth-option:disabled { opacity:.48; cursor:not-allowed; }
+.auth-setup-note { margin:4px 0 0!important; padding:11px 13px; border:1px dashed #8a9690; color:#64716b!important; font:700 9px/1.5 monospace!important; }
+.auth-error { padding:12px 14px; border:1px solid #c78478; background:#f8e7e2; color:#843d32!important; font:700 10px/1.5 monospace!important; }
+.auth-privacy { padding-top:24px; border-top:1px solid var(--line); font-size:13px!important; }
+.auth-privacy a { color:var(--green); }
+
 .legal-shell { min-height:100vh; padding:0 7vw 70px; background:var(--paper); }
 .legal-shell article { max-width:790px; margin:0 auto; padding:80px 0; }
 .legal-shell h1 { margin:22px 0 38px; font:500 clamp(50px,7vw,84px)/.95 Georgia,serif; letter-spacing:-.055em; }
@@ -317,5 +338,8 @@ button { color:inherit; }
   .admin-controls>span { padding:0; }
   .feedback-entry { padding:18px 15px; }
   .feedback-entry-footer { align-items:stretch; flex-direction:column; }
+  .auth-shell { padding-left:18px; padding-right:18px; }
+  .auth-card { padding-top:48px; }
+  .auth-option { grid-template-columns:64px 1fr 16px; gap:10px; padding:0 15px; }
 }
 @media (prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; } }

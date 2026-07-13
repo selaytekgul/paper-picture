@@ -54,12 +54,45 @@ test("profiles are private, keyed, mode-aware, server-scored, and deletable", as
   assert.match(service, /FEEDBACK_RETENTION = 365 \* DAY/);
   assert.match(service, /Too many requests/);
   assert.match(profile, /Delete all my data/);
-  assert.match(privacy, /do not store your raw sign-in email or ChatGPT access tokens/);
+  assert.match(privacy, /do not store your raw sign-in email or provider access or refresh tokens/);
   assert.match(privacy, /available to the project owner for review/);
   assert.match(privacy, /no user identifier, IP address, page URL, or message text/);
   assert.match(worker, /Content-Security-Policy/);
   assert.match(worker, /X-Content-Type-Options/);
   assert.match(worker, /Strict-Transport-Security/);
+});
+
+test("optional authentication supports ChatGPT, Google, and GitHub without storing provider tokens", async () => {
+  const [authConfig, authService, chatGPTAuth, authRoute, signInPage, signInClient, signOutControl, privacy] = await Promise.all([
+    readFile(new URL("../auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/auth-service.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/chatgpt-auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/auth/[...nextauth]/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/sign-in/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sign-in/sign-in-client.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sign-out-control.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(authConfig, /Google\(/);
+  assert.match(authConfig, /GitHub\(/);
+  assert.match(authConfig, /email_verified.*true/s);
+  assert.match(authConfig, /api\.github\.com\/user\/emails/);
+  assert.match(authConfig, /item\.verified === true/);
+  assert.match(authConfig, /strategy: "jwt"/);
+  assert.match(authConfig, /maxAge: 30 \* 24 \* 60 \* 60/);
+  assert.doesNotMatch(authConfig, /token\.(accessToken|access_token|refreshToken|refresh_token)\s*=/);
+  assert.match(authService, /await auth\(\)/);
+  assert.match(authService, /getChatGPTUser/);
+  assert.match(authService, /requireCurrentUser/);
+  assert.match(chatGPTAuth, /safeRelativeReturnPath/);
+  assert.match(chatGPTAuth, /pathname\.startsWith\("\/api\/auth\/"\)/);
+  assert.match(authRoute, /export const \{ GET, POST \}/);
+  assert.match(signInPage, /Optional player profile/);
+  assert.match(signInClient, /Continue with ChatGPT/);
+  assert.match(signInClient, /Continue with Google/);
+  assert.match(signInClient, /Continue with GitHub/);
+  assert.match(signOutControl, /signOut\(\{ redirectTo: destination \}\)/);
+  assert.match(privacy, /same private Paper Picture profile/);
 });
 
 test("owner feedback inbox is protected, actionable, and exportable", async () => {

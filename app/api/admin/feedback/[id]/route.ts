@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params;
-    const body = await request.json();
+    const body = await request.json() as { status?: unknown };
     return json(await updateFeedbackStatus(id, body?.status));
   } catch (error) {
     return apiError(error);

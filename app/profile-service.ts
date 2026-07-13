@@ -13,9 +13,9 @@ import {
   type GameMode,
   type Paper,
 } from "../data/papers";
-import { getChatGPTUser } from "./chatgpt-auth";
+import { getCurrentUser } from "./auth-service";
 
-const PRIVACY_VERSION = "2026-07-13-v3";
+const PRIVACY_VERSION = "2026-07-13-v5";
 const DAY = 24 * 60 * 60 * 1000;
 const ABANDONED_SESSION_RETENTION = 7 * DAY;
 const FEEDBACK_RETENTION = 365 * DAY;
@@ -47,7 +47,7 @@ export class ApiError extends Error {
 export function json(data: unknown, status = 200) {
   return Response.json(data, {
     status,
-    headers: { "Cache-Control": "private, no-store", Vary: "oai-authenticated-user-email" },
+    headers: { "Cache-Control": "private, no-store", Vary: "Cookie, oai-authenticated-user-email" },
   });
 }
 
@@ -64,8 +64,8 @@ export async function apiError(error: unknown) {
 }
 
 export async function requireIdentity(): Promise<Identity> {
-  const user = await getChatGPTUser();
-  if (!user) throw new ApiError(401, "Sign in with ChatGPT to continue.");
+  const user = await getCurrentUser();
+  if (!user) throw new ApiError(401, "Sign in to continue.");
   const secret = getEnvironment().PROFILE_ID_SECRET;
   if (!secret) throw new ApiError(503, "Profile storage is not configured yet.");
   return {
@@ -80,8 +80,8 @@ export function isAdminEmail(email: string) {
 }
 
 export async function requireAdmin() {
-  const user = await getChatGPTUser();
-  if (!user) throw new ApiError(401, "Sign in with ChatGPT to continue.");
+  const user = await getCurrentUser();
+  if (!user) throw new ApiError(401, "Sign in to continue.");
   if (!isAdminEmail(user.email)) throw new ApiError(404, "Not found.");
   return user;
 }

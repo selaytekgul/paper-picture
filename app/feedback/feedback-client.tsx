@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { collectionCatalog, getPlayablePapers } from "../../data/papers";
+import type { AuthProvider } from "../auth-service";
+import SignOutControl from "../sign-out-control";
 
-export default function FeedbackClient({ signOutPath }: { signOutPath: string }) {
+export default function FeedbackClient({ authProvider, signOutDestination }: { authProvider: AuthProvider; signOutDestination: string }) {
   const [category, setCategory] = useState("gameplay");
-  const [collectionId, setCollectionId] = useState(collectionCatalog[1]?.id ?? collectionCatalog[0].id);
+  const [collectionId, setCollectionId] = useState<string>(collectionCatalog[1]?.id ?? collectionCatalog[0].id);
   const [paperId, setPaperId] = useState("");
   const [rating, setRating] = useState("");
   const [message, setMessage] = useState("");
@@ -38,7 +40,7 @@ export default function FeedbackClient({ signOutPath }: { signOutPath: string })
   return (
     <main className="form-shell">
       <a className="skip-link" href="#feedback-form">Skip to feedback form</a>
-      <nav className="topbar profile-nav" aria-label="Primary navigation"><Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link><div className="profile-nav-actions"><Link href="/test-guide">Test guide</Link><a href={signOutPath}>Sign out</a></div></nav>
+      <nav className="topbar profile-nav" aria-label="Primary navigation"><Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link><div className="profile-nav-actions"><Link href="/test-guide">Test guide</Link><SignOutControl provider={authProvider} destination={signOutDestination} /></div></nav>
       <section className="form-heading"><div className="eyebrow"><span /> Public-test preparation</div><h1>Tell us what you noticed.</h1><p>Use this form for gameplay feedback, factual corrections, accessibility problems, bugs, privacy questions, or copyright and takedown requests.</p></section>
       <form id="feedback-form" className="feedback-form" onSubmit={submit}>
         <div className="form-grid feedback-form-grid">

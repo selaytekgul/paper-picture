@@ -6,15 +6,15 @@
 - [x] Six game modes are available.
 - [x] Anonymous play, optional profiles, saved games, deletion, feedback, owner inbox, and aggregate monitoring are implemented.
 - [x] `paperpicture.net` DNS, HTTPS, canonical metadata, robots, and sitemap are active.
-- [x] Public outer access is enabled; private data routes require ChatGPT identity.
+- [x] Public outer access is enabled; private data routes accept only a verified supported identity.
 - [x] A production backup was exported and stored privately outside GitHub.
 
 ## Automated acceptance
 
 - [x] Production build passes.
-- [x] Seven release tests pass.
+- [x] Nine release tests pass.
 - [x] All 36 image checksums match both rights archives.
-- [x] Lint and whitespace checks pass.
+- [x] Lint, TypeScript, and whitespace checks pass.
 - [x] Health output contains public collection data only.
 - [x] Metrics endpoint is owner-only and aggregate-only.
 
@@ -30,6 +30,8 @@
 
 ## Owner acceptance after deployment
 
+- [ ] Complete and cancel sign-in once with each enabled provider: ChatGPT, Google, and GitHub.
+- [ ] Confirm matching verified emails reach the same private profile; confirm sign-out clears the selected provider session.
 - [ ] Save one game in each collection and confirm mode labels in private history.
 - [ ] Exercise an incorrect answer, third-figure reveal, and assisted source-open state.
 - [ ] Submit one new feedback item, change its status, and privately export the CSV.

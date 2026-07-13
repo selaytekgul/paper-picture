@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import type { AuthProvider } from "../../auth-service";
+import SignOutControl from "../../sign-out-control";
 
 type FeedbackStatus = "new" | "reviewing" | "resolved";
 type FeedbackItem = {
@@ -32,7 +34,7 @@ type MetricsResponse = {
 
 const statuses: Array<FeedbackStatus | "all"> = ["all", "new", "reviewing", "resolved"];
 
-export default function FeedbackAdminClient({ signOutPath }: { signOutPath: string }) {
+export default function FeedbackAdminClient({ authProvider, signOutDestination }: { authProvider: AuthProvider; signOutDestination: string }) {
   const [data, setData] = useState<FeedbackResponse | null>(null);
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [error, setError] = useState("");
@@ -115,7 +117,7 @@ export default function FeedbackAdminClient({ signOutPath }: { signOutPath: stri
     <main className="admin-shell">
       <nav className="topbar profile-nav">
         <Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link>
-        <div className="profile-nav-actions"><Link href="/profile">My profile</Link><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
+        <div className="profile-nav-actions"><Link href="/profile">My profile</Link><Link href="/">Play</Link><SignOutControl provider={authProvider} destination={signOutDestination} /></div>
       </nav>
 
       <header className="admin-heading">

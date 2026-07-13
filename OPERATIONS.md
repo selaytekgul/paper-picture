@@ -58,7 +58,7 @@ For a material privacy, rights, or data-integrity incident, stop invitations, re
 
 ## Release acceptance
 
-- `npm test`, `npm run lint`, and `git diff --check` pass.
+- `npm test`, `npm run lint`, `npm run typecheck`, and `git diff --check` pass.
 - Generated migrations and schema agree.
 - Rights evidence hashes match every shipped figure.
 - Anonymous and authenticated game paths pass.

@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
+import type { AuthProvider } from "../auth-service";
+import SignOutControl from "../sign-out-control";
 
 type ProfileData = {
   profile: { displayName: string; createdAt: number };
@@ -29,7 +31,7 @@ type ProfileData = {
   }>;
 };
 
-export default function ProfileClient({ suggestedName, signOutPath, isAdmin }: { suggestedName: string; signOutPath: string; isAdmin: boolean }) {
+export default function ProfileClient({ suggestedName, authProvider, signOutDestination, isAdmin }: { suggestedName: string; authProvider: AuthProvider; signOutDestination: string; isAdmin: boolean }) {
   const [data, setData] = useState<ProfileData | null>(null);
   const [name, setName] = useState(suggestedName);
   const [status, setStatus] = useState("Loading your private profile…");
@@ -92,7 +94,7 @@ export default function ProfileClient({ suggestedName, signOutPath, isAdmin }: {
     <main className="profile-shell">
       <nav className="topbar profile-nav">
         <Link className="brand" href="/"><span className="brand-mark">PP</span><span>Paper Picture</span></Link>
-        <div className="profile-nav-actions">{isAdmin && <Link href="/admin/feedback">Feedback inbox</Link>}<Link href="/feedback">Feedback</Link><Link href="/">Play</Link><a href={signOutPath}>Sign out</a></div>
+        <div className="profile-nav-actions">{isAdmin && <Link href="/admin/feedback">Feedback inbox</Link>}<Link href="/feedback">Feedback</Link><Link href="/">Play</Link><SignOutControl provider={authProvider} destination={signOutDestination} /></div>
       </nav>
 
       <section className="profile-heading">

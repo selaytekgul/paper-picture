@@ -31,6 +31,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 - Collection picker and six game modes: institution, country, author, venue, year, and topic
 - Progressive reveal, assisted-round classification, scoring, and complete attribution
 - Anonymous play with a clear, non-blocking saved-history fallback
+- Optional ChatGPT, Google, and GitHub sign-in with one provider-neutral private profile
 - Server-owned authenticated sessions, attempts, completion, and score calculation
 - Private player profile, history, editing, and complete data deletion
 - Authenticated feedback/contact form and owner-only inbox with status management and CSV export
@@ -57,7 +58,7 @@ Retention implemented in application code:
 - Aggregate operational counters: 90 days
 - Completed sessions and profiles: until player deletion
 
-Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized email)`. Gameplay tables do not store raw sign-in email, authentication tokens, IP address, or browser fingerprint. Operational counters store only an event name, hourly bucket, and count.
+Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. ChatGPT uses native Sites identity headers; Google and GitHub use portable Auth.js OAuth routes and a secured site session. Gameplay tables do not store raw sign-in email, authentication tokens, IP address, or browser fingerprint. Operational counters store only an event name, hourly bucket, and count.
 
 ## Release evidence completed
 
@@ -72,6 +73,7 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized email)`. Gameplay 
 ## Hosted configuration absent from Git
 
 - `PROFILE_ID_SECRET` and `ADMIN_EMAIL` values
+- `AUTH_SECRET` and Google/GitHub OAuth client credentials
 - Physical D1 database identifier and database contents
 - Hosting source-write credentials and owner bypass tokens
 - Registrar password, recovery information, and browser session

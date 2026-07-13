@@ -54,7 +54,8 @@ export function chatGPTSignOutPath(returnTo = "/"): string {
   return `${SIGN_OUT_PATH}?return_to=${encodeURIComponent(safeReturnTo)}`;
 }
 
-function safeRelativeReturnPath(value: string): string {
+export function safeRelativeReturnPath(value: string | null | undefined): string {
+  if (!value) return "/";
   if (!value.startsWith("/") || value.startsWith("//")) return "/";
 
   let url: URL;
@@ -71,9 +72,12 @@ function safeRelativeReturnPath(value: string): string {
 
 function isReservedAuthPath(pathname: string): boolean {
   return (
+    pathname === "/sign-in" ||
     pathname === SIGN_IN_PATH ||
     pathname === SIGN_OUT_PATH ||
-    pathname === CALLBACK_PATH
+    pathname === CALLBACK_PATH ||
+    pathname.startsWith("/api/auth/") ||
+    pathname.startsWith("/auth/finish-signout")
   );
 }
 
