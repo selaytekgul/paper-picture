@@ -8,6 +8,5 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ["/api/", "/feedback", "/profile"],
     },
     sitemap: "https://paperpicture.net/sitemap.xml",
-    host: "https://paperpicture.net",
   };
 }

@@ -45,6 +45,14 @@
 - [ ] Reduced-motion operating-system setting
 - [ ] VoiceOver or another screen reader
 
+## Search discovery
+
+- [x] Canonical URL, crawlable robots file, and sitemap are public.
+- [x] Paper Picture favicon, Apple touch icon, manifest icons, descriptive metadata, and WebSite structured data are deployed.
+- [ ] Add `paperpicture.net` as a Google Search Console domain property.
+- [ ] Submit `https://paperpicture.net/sitemap.xml` in Search Console.
+- [ ] Inspect `https://paperpicture.net/` and request indexing once after verification.
+
 ## Friend pilot brief
 
 - [ ] Invite 1–5 friends for the first pass.

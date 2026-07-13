@@ -203,3 +203,30 @@ test("operational monitoring is aggregate-only and owner protected", async () =>
   assert.match(route, /getOperationalMetrics/);
   assert.match(privacy, /Aggregate operational counters are removed after 90 days/);
 });
+
+test("search metadata and Paper Picture favicon assets are complete", async () => {
+  const [layout, manifest, robots, sitemap] = await Promise.all([
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/manifest.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/robots.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(layout, /favicon\.ico/);
+  assert.match(layout, /favicon-48\.png/);
+  assert.match(layout, /apple-touch-icon\.png/);
+  assert.match(layout, /application\/ld\+json/);
+  assert.match(layout, /"@type": "WebSite"/);
+  assert.match(layout, /index: true/);
+  assert.match(manifest, /icon-192\.png/);
+  assert.match(manifest, /icon-512\.png/);
+  assert.match(robots, /sitemap: "https:\/\/paperpicture\.net\/sitemap\.xml"/);
+  assert.doesNotMatch(robots, /host:/);
+  assert.match(sitemap, /2026-07-13/);
+  await Promise.all([
+    "favicon.ico",
+    "favicon-48.png",
+    "apple-touch-icon.png",
+    "icon-192.png",
+    "icon-512.png",
+  ].map((file) => access(new URL(`../public/${file}`, import.meta.url))));
+});
