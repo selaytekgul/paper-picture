@@ -35,12 +35,12 @@ export type Paper = {
 export type GameMode = "institution" | "country" | "author" | "venue" | "year" | "topic";
 
 export const gameModes: { id: GameMode; label: string; description: string }[] = [
-  { id: "institution", label: "Institution", description: "Match a paper to an author affiliation." },
-  { id: "country", label: "Country", description: "Locate the first listed affiliation." },
-  { id: "author", label: "Author", description: "Recognize a researcher from the figures." },
-  { id: "venue", label: "Venue", description: "Guess the publication venue." },
-  { id: "year", label: "Year", description: "Place the paper in time." },
-  { id: "topic", label: "Topic", description: "Identify the research area." },
+  { id: "institution", label: "Institution", description: "Guess an author’s university or research institute." },
+  { id: "country", label: "Country", description: "Guess the country where an author works." },
+  { id: "author", label: "Author", description: "Guess one of the paper’s authors." },
+  { id: "venue", label: "Venue", description: "Guess where the paper was published." },
+  { id: "year", label: "Year", description: "Guess when the paper was published." },
+  { id: "topic", label: "Topic", description: "Guess the paper’s research area." },
 ];
 
 const ccBy = "https://creativecommons.org/licenses/by/4.0/";

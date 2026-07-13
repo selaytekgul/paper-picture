@@ -19,18 +19,23 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
     readFile(new URL("../data/papers.ts", import.meta.url), "utf8"),
     readFile(new URL("../data/open-graphics-02.ts", import.meta.url), "utf8"),
   ]);
-  assert.match(layout, /Paper Picture — A visual research game/);
+  assert.match(layout, /Paper Picture — Look at the figure\. Guess the paper\./);
   assert.match(data, /Open Graphics Collection 01/);
   assert.match(data02, /Open Graphics Collection 02/);
-  assert.match(page, /Choose what to investigate/);
+  assert.match(page, /Set up your game/);
+  assert.match(page, /What do you want to guess\?/);
+  assert.match(page, /Start the game/);
+  assert.match(page, /No sign-in needed/);
   assert.match(page, /collectionCatalog/);
   assert.match(page, /gameModes/);
   assert.match(page, /buildRoundQuestion/);
-  assert.match(page, /gameMode === "topic" \? "Visual research clue" : paper\.topic/);
+  assert.match(page, /gameMode === "topic" \? "Research figure" : paper\.topic/);
   assert.match(page, /CC BY 4\.0/);
   assert.match(page, /href="\/profile"/);
   assert.match(page, /href="\/privacy"/);
-  assert.doesNotMatch(page, /fictional|prototype collection|codex-preview/i);
+  assert.doesNotMatch(page, /Choose what to investigate|Build your round|Real papers\. Traceable figures|fictional|prototype collection|codex-preview/i);
+  assert.match(layout, /og-simple\.png/);
+  await access(new URL("../public/og-simple.png", import.meta.url));
 });
 
 test("links every shipped paper to Paperlog by DOI while retaining the publication DOI", async () => {
