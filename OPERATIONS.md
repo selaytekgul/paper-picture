@@ -30,13 +30,13 @@ GitHub backs up source and documentation only. It is not a backup of D1 data, ho
 ## Private backup procedure
 
 1. Sign in as the configured owner.
-2. Export `/api/admin/backup` before a schema or public-test release.
-3. Verify the export format, timestamp, collection list, and presence of all six application tables.
+2. Use **Private backup** in the owner dashboard before a schema or public-test release.
+3. Wait for the dashboard to confirm the format, timestamp, collection manifest, and presence of all six application tables before treating the download as valid.
 4. Store the file in an owner-controlled location outside the repository; restrict it to the owner account.
 5. Record only the timestamp and successful verification in public release notes—never row contents, feedback text, user keys, or the private filesystem path.
 6. Delete temporary browser/download copies after the protected copy is verified.
 
-The 13 July release backup was completed and stored privately. A restore drill remains a roadmap item.
+The version 16 backup generated on 13 July was verified with two collection descriptors and all six application tables, then stored privately with owner-only permissions. A restore drill remains a roadmap item.
 
 ## Monitoring and incident response
 

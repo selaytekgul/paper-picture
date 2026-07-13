@@ -128,13 +128,14 @@ test("optional authentication supports ChatGPT, Google, and GitHub without stori
 });
 
 test("owner feedback inbox is protected, actionable, and exportable", async () => {
-  const [service, page, client, listRoute, updateRoute, profilePage] = await Promise.all([
+  const [service, page, client, listRoute, updateRoute, profilePage, backupHelpers] = await Promise.all([
     readFile(new URL("../app/profile-service.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/feedback/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/admin/feedback/feedback-admin-client.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/feedback/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/feedback/[id]/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/profile/page.tsx", import.meta.url), "utf8"),
+    importTypeScriptModule("../app/admin/feedback/backup-download.ts"),
   ]);
   assert.match(service, /ADMIN_EMAIL/);
   assert.match(service, /await requireAdmin\(\)/);
@@ -148,9 +149,26 @@ test("owner feedback inbox is protected, actionable, and exportable", async () =
   assert.match(updateRoute, /updateFeedbackStatus/);
   assert.match(client, /Download CSV/);
   assert.match(client, /paper-picture-feedback-/);
+  assert.match(client, /verifyPrivateBackup/);
+  assert.match(client, /Verified backup downloaded/);
   assert.match(client, /All statuses/);
   assert.match(client, /resolved/);
   assert.match(profilePage, /isAdminEmail/);
+
+  const completeBackup = {
+    format: "paper-picture-private-backup",
+    formatVersion: 1,
+    generatedAt: "2026-07-13T12:00:00.000Z",
+    collections: [{ id: "open-graphics-01-v1", version: "1.0", label: "Collection 01" }],
+    tables: Object.fromEntries(backupHelpers.REQUIRED_BACKUP_TABLES.map((table) => [table, []])),
+  };
+  assert.equal(backupHelpers.verifyPrivateBackup(completeBackup), completeBackup);
+  assert.equal(backupHelpers.privateBackupFilename(completeBackup.generatedAt), "paper-picture-private-backup-2026-07-13T12-00-00Z.json");
+  assert.throws(
+    () => backupHelpers.verifyPrivateBackup({ ...completeBackup, tables: { ...completeBackup.tables, operational_metrics: undefined } }),
+    /Missing tables: operational_metrics/,
+  );
+  assert.throws(() => backupHelpers.verifyPrivateBackup({ ...completeBackup, collections: [] }), /collection manifest/);
 });
 
 test("health endpoint reports both immutable collections without player data", async () => {

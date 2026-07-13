@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { AuthProvider } from "../../auth-service";
 import SignOutControl from "../../sign-out-control";
+import { privateBackupFilename, REQUIRED_BACKUP_TABLES, verifyPrivateBackup } from "./backup-download";
 
 type FeedbackStatus = "new" | "reviewing" | "resolved";
 type FeedbackItem = {
@@ -42,6 +43,8 @@ export default function FeedbackAdminClient({ authProvider, signOutDestination }
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [updating, setUpdating] = useState<string | null>(null);
+  const [backupState, setBackupState] = useState<"idle" | "exporting" | "success" | "error">("idle");
+  const [backupMessage, setBackupMessage] = useState("");
 
   useEffect(() => {
     void loadFeedback();
@@ -113,6 +116,33 @@ export default function FeedbackAdminClient({ authProvider, signOutDestination }
     URL.revokeObjectURL(url);
   }
 
+  async function downloadPrivateBackup() {
+    setBackupState("exporting");
+    setBackupMessage("Creating and checking the private backup…");
+    try {
+      const response = await fetch("/api/admin/backup", { cache: "no-store" });
+      const result = await response.json() as unknown;
+      if (!response.ok) {
+        const message = typeof result === "object" && result !== null && "error" in result && typeof result.error === "string"
+          ? result.error
+          : "The private backup could not be created.";
+        throw new Error(message);
+      }
+      const backup = verifyPrivateBackup(result);
+      const url = URL.createObjectURL(new Blob([`${JSON.stringify(backup, null, 2)}\n`], { type: "application/json;charset=utf-8" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = privateBackupFilename(backup.generatedAt);
+      link.click();
+      URL.revokeObjectURL(url);
+      setBackupState("success");
+      setBackupMessage(`Verified backup downloaded: ${REQUIRED_BACKUP_TABLES.length} tables and ${backup.collections.length} collections.`);
+    } catch (backupError) {
+      setBackupState("error");
+      setBackupMessage(backupError instanceof Error ? backupError.message : "The private backup could not be created.");
+    }
+  }
+
   return (
     <main className="admin-shell">
       <nav className="topbar profile-nav">
@@ -122,7 +152,10 @@ export default function FeedbackAdminClient({ authProvider, signOutDestination }
 
       <header className="admin-heading">
         <div><div className="eyebrow"><span /> Owner workspace</div><h1>Feedback inbox</h1><p>Review submitted test comments without exposing account emails or internal player identifiers.</p></div>
-        <div className="admin-heading-actions"><button className="secondary-button" onClick={() => void loadFeedback()}>Refresh</button><a className="secondary-button" href="/api/admin/backup" download>Private backup <span>↓</span></a><button className="primary-button" onClick={downloadCsv} disabled={!visible.length}>Download CSV <span>↓</span></button></div>
+        <div className="admin-heading-operations">
+          <div className="admin-heading-actions"><button className="secondary-button" onClick={() => void loadFeedback()}>Refresh</button><button className="secondary-button" onClick={() => void downloadPrivateBackup()} disabled={backupState === "exporting"}>{backupState === "exporting" ? "Checking backup…" : "Private backup"} <span>↓</span></button><button className="primary-button" onClick={downloadCsv} disabled={!visible.length}>Download CSV <span>↓</span></button></div>
+          {backupMessage && <p className={`admin-export-status ${backupState === "error" ? "is-error" : ""}`} role="status" aria-live="polite">{backupMessage}</p>}
+        </div>
       </header>
 
       <section className="admin-summary" aria-label="Feedback summary">
