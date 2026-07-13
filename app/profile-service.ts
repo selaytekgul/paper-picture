@@ -292,6 +292,31 @@ export async function updateFeedbackStatus(id: string, status: unknown) {
   return updated;
 }
 
+export async function exportPrivateBackup() {
+  await requireAdmin();
+  const db = getDatabase();
+  const [profiles, sessions, attempts, feedbackRows, limits] = await Promise.all([
+    db.prepare("SELECT * FROM profiles ORDER BY created_at").all<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM game_sessions ORDER BY started_at").all<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM round_attempts ORDER BY answered_at").all<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM feedback ORDER BY created_at").all<Record<string, unknown>>(),
+    db.prepare("SELECT * FROM rate_limits ORDER BY window_start").all<Record<string, unknown>>(),
+  ]);
+  return {
+    format: "paper-picture-private-backup",
+    formatVersion: 1,
+    generatedAt: new Date().toISOString(),
+    collection: { id: collection.id, version: collection.version, label: collection.label },
+    tables: {
+      profiles: profiles.results ?? [],
+      game_sessions: sessions.results ?? [],
+      round_attempts: attempts.results ?? [],
+      feedback: feedbackRows.results ?? [],
+      rate_limits: limits.results ?? [],
+    },
+  };
+}
+
 async function enforceRateLimit(identity: Identity, action: string, limit: number, windowMs: number) {
   const db = getDatabase();
   const windowStart = Math.floor(Date.now() / windowMs) * windowMs;

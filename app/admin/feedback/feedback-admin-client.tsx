@@ -106,7 +106,7 @@ export default function FeedbackAdminClient({ signOutPath }: { signOutPath: stri
 
       <header className="admin-heading">
         <div><div className="eyebrow"><span /> Owner workspace</div><h1>Feedback inbox</h1><p>Review submitted test comments without exposing account emails or internal player identifiers.</p></div>
-        <div className="admin-heading-actions"><button className="secondary-button" onClick={() => void loadFeedback()}>Refresh</button><button className="primary-button" onClick={downloadCsv} disabled={!visible.length}>Download CSV <span>↓</span></button></div>
+        <div className="admin-heading-actions"><button className="secondary-button" onClick={() => void loadFeedback()}>Refresh</button><a className="secondary-button" href="/api/admin/backup" download>Private backup <span>↓</span></a><button className="primary-button" onClick={downloadCsv} disabled={!visible.length}>Download CSV <span>↓</span></button></div>
       </header>
 
       <section className="admin-summary" aria-label="Feedback summary">
