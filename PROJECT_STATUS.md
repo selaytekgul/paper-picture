@@ -14,9 +14,9 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 16 · source commit `5970509` |
+| Current Sites version | 17 · source commit `9942887` |
 
-The Sites control plane retains saved deployment versions. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
+The Sites control plane retains saved deployment versions. Production version 16 is also marked by the pushed annotated Git tag `production-v16-2026-07-13`, providing an explicit rollback baseline before the plain-UX release. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
 ## Immutable content releases
 
@@ -29,6 +29,8 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 
 ## Current product surfaces
 
+- Plain, game-first landing flow: one-sentence purpose, collection choice, guess-type choice, and one primary start action
+- Compact three-step explanation, with research-selection and licensing details available without competing with play
 - Collection picker and six game modes: institution, country, author, venue, year, and topic
 - Progressive reveal, assisted-round classification, scoring, and complete attribution
 - DOI-based result links to the corresponding Paperlog page, with the publication DOI retained separately
@@ -64,6 +66,8 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 
 ## Release evidence completed
 
+- Production version 17 was checked on the custom domain at desktop and 390 × 844: no horizontal overflow, four answer choices, correct-answer reveal, score update, and DOI-specific Paperlog link all passed.
+- The version 17 homepage has a refreshed repository screenshot and a dedicated social preview using the simpler product message.
 - A fresh private production backup was exported from version 16 on 13 July, verified to contain both collection descriptors and all six application tables, and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
 - Production build, lint, TypeScript, whitespace checks, and ten automated release tests pass.
