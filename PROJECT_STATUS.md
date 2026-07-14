@@ -100,6 +100,7 @@ Preserve the HMAC secret outside Git: replacing it would disconnect existing pro
 - Retention cleanup is request-driven rather than a scheduled global job.
 - Safari, Firefox, screen-reader, and restore-drill acceptance still require owner-operated checks.
 - Aggregate monitoring is descriptive; it does not yet send alerts.
+- The domain-wide Search Console property still awaits METUnic publication of a Google DNS verification record; the verified URL-prefix property, indexed homepage, and processed sitemap are active.
 - Google authentication works in production, but Google OAuth consent-branding verification has not yet been submitted; Search Console ownership is now available for that process.
 
 ## Handoff rule

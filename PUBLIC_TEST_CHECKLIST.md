@@ -55,9 +55,9 @@
 - [x] Canonical URL, crawlable robots file, and sitemap are public.
 - [x] Paper Picture favicon, Apple touch icon, manifest icons, descriptive metadata, and WebSite structured data are deployed.
 - [x] Add `https://paperpicture.net/` as a verified Google Search Console URL-prefix property.
-- [ ] Complete the `paperpicture.net` domain property after the registrar TXT record becomes publicly visible.
+- [ ] Complete the `paperpicture.net` domain property after METUnic publishes either configured Google DNS verification record.
 - [x] Submit `https://paperpicture.net/sitemap.xml` in Search Console; Google processed it successfully and discovered all three public URLs.
-- [ ] Inspect `https://paperpicture.net/` and request indexing once after verification.
+- [x] Inspect `https://paperpicture.net/`; Search Console reports “URL is on Google” and “Page is indexed.”
 - [ ] Submit Google OAuth consent-branding verification now that Search Console ownership is available.
 
 ## Friend pilot brief
