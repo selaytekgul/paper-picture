@@ -4,8 +4,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://paperpicture.net"),
   applicationName: "Paper Picture",
-  title: "Paper Picture — Look at the figure. Guess the paper.",
-  description: "A quick visual game built from real computer-graphics research. Look at the figures, choose an answer, and discover the paper.",
+  title: "Paper Picture — Computer Graphics Research Paper Guessing Game",
+  description: "Guess real computer graphics and digital geometry research papers from their figures, then discover the authors, institutions, venues, and sources.",
   keywords: ["computer graphics", "digital geometry", "research papers", "geometry processing", "visual research game"],
   alternates: { canonical: "/" },
   verification: {
@@ -27,16 +27,16 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
   openGraph: {
-    title: "Paper Picture — Look at the figure. Guess the paper.",
+    title: "Paper Picture — Computer Graphics Research Paper Guessing Game",
     description: "Explore real computer-graphics research through its pictures in six quick rounds.",
     url: "/",
     siteName: "Paper Picture",
     type: "website",
-    images: [{ url: "/og-simple.png", width: 1733, height: 908, alt: "Paper Picture — Look at the figure. Guess the paper." }],
+    images: [{ url: "/og-simple.png", width: 1733, height: 908, alt: "Paper Picture — Computer Graphics Research Paper Guessing Game" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Paper Picture — Look at the figure. Guess the paper.",
+    title: "Paper Picture — Computer Graphics Research Paper Guessing Game",
     description: "Explore real computer-graphics research through its pictures in six quick rounds.",
     images: ["/og-simple.png"],
   },

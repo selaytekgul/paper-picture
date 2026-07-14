@@ -13,13 +13,14 @@ async function importTypeScriptModule(relativePath) {
 }
 
 test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six game modes", async () => {
-  const [page, layout, data, data02] = await Promise.all([
+  const [page, layout, about, data, data02] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/about/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../data/papers.ts", import.meta.url), "utf8"),
     readFile(new URL("../data/open-graphics-02.ts", import.meta.url), "utf8"),
   ]);
-  assert.match(layout, /Paper Picture — Look at the figure\. Guess the paper\./);
+  assert.match(layout, /Paper Picture — Computer Graphics Research Paper Guessing Game/);
   assert.match(layout, /google: "78qGk-ze1JLFwz5RwmTtF18NIdzJspt3G1guOlfjQYg"/);
   assert.match(data, /Open Graphics Collection 01/);
   assert.match(data02, /Open Graphics Collection 02/);
@@ -34,6 +35,9 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
   assert.match(page, /CC BY 4\.0/);
   assert.match(page, /href="\/profile"/);
   assert.match(page, /href="\/privacy"/);
+  assert.match(page, /href="\/about"/);
+  assert.match(about, /Why Paper Picture exists/);
+  assert.match(about, /paperlog\.net/);
   assert.doesNotMatch(page, /Choose what to investigate|Build your round|Real papers\. Traceable figures|fictional|prototype collection|codex-preview/i);
   assert.match(layout, /og-simple\.png/);
   await access(new URL("../public/og-simple.png", import.meta.url));
@@ -310,7 +314,9 @@ test("search metadata and Paper Picture favicon assets are complete", async () =
   assert.match(manifest, /icon-512\.png/);
   assert.match(robots, /sitemap: "https:\/\/paperpicture\.net\/sitemap\.xml"/);
   assert.doesNotMatch(robots, /host:/);
-  assert.match(sitemap, /2026-07-13/);
+  assert.match(robots, /"\/about"/);
+  assert.match(sitemap, /"\/about"/);
+  assert.match(sitemap, /2026-07-14/);
   await Promise.all([
     "favicon.ico",
     "favicon-48.png",

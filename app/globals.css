@@ -221,6 +221,11 @@ button { color:inherit; }
 .legal-shell h2 { margin:38px 0 8px; font:500 27px Georgia,serif; }
 .legal-shell p { color:#4e5c56; font:16px/1.7 Georgia,serif; }
 .legal-shell p a { color:var(--green); }
+.about-facts { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin:40px 0; border:1px solid var(--line); background:var(--line); }
+.about-facts div { padding:24px; background:var(--cream); }
+.about-facts strong { display:block; color:var(--ink); font:500 34px/1 Georgia,serif; }
+.about-facts span { display:block; margin-top:7px; color:#68736f; font:700 9px/1.4 monospace; text-transform:uppercase; letter-spacing:.08em; }
+.about-links { display:flex; flex-wrap:wrap; gap:12px; margin-top:42px; }
 .legal-version { margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font:700 9px monospace!important; text-transform:uppercase; }
 .legal-shell b { color:var(--ink); }
 .guide-actions { display:flex; gap:12px; align-items:center; margin-top:45px; }
@@ -322,6 +327,7 @@ button { color:inherit; }
   .simple-how li { min-height:82px; }
   .figure-frame { min-height:310px; }
   .landing-footer { align-items:flex-start; flex-direction:column; gap:16px; line-height:1.4; }
+  .about-facts { grid-template-columns:1fr; }
   .game-header .brand>span:last-child { display:none; }
   .round-status { display:flex; }
   .round-status .progress-track { width:64px; }

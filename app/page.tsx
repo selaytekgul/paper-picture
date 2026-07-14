@@ -165,7 +165,7 @@ export default function Home() {
         <a className="skip-link" href="#main-content">Skip to main content</a>
         <nav className="topbar" aria-label="Primary navigation">
           <a className="brand" href="#top" aria-label="Paper Picture home"><span className="brand-mark">PP</span><span>Paper Picture</span></a>
-          <div className="topbar-actions"><a href="/test-guide">How it works</a><a className="profile-link" href="/profile">My games</a></div>
+          <div className="topbar-actions"><a href="/test-guide">How it works</a><a href="/about">About</a><a className="profile-link" href="/profile">My games</a></div>
         </nav>
         <section className="simple-hero" id="main-content">
           <div className="eyebrow"><span /> A visual research game</div>
@@ -201,7 +201,7 @@ export default function Home() {
           <ol><li><b>1</b><span>Study one research figure.</span></li><li><b>2</b><span>Choose from four answers.</span></li><li><b>3</b><span>See the paper and its source.</span></li></ol>
         </section>
         <p className="trust-note">Every clue comes from a real, openly licensed paper. Sources and credits are shown after each answer. <a href="/test-guide">See how papers are selected.</a></p>
-        <footer className="landing-footer"><span>{totalStats.papers} real papers · {totalStats.figures} figures · CC BY 4.0</span><span><a href="/feedback">Feedback</a><a href="/privacy">Privacy</a><a href="https://github.com/selaytekgul/paper-picture" target="_blank" rel="noreferrer">GitHub</a></span></footer>
+        <footer className="landing-footer"><span>{totalStats.papers} real papers · {totalStats.figures} figures · CC BY 4.0</span><span><a href="/about">About</a><a href="/feedback">Feedback</a><a href="/privacy">Privacy</a><a href="https://github.com/selaytekgul/paper-picture" target="_blank" rel="noreferrer">GitHub</a></span></footer>
       </main>
     );
   }
