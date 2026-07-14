@@ -14,7 +14,7 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 17 · source commit `9942887` |
+| Current Sites version | 18 · source commit `b5199c0` |
 
 The Sites control plane retains saved deployment versions. Production version 16 is also marked by the pushed annotated Git tag `production-v16-2026-07-13`, providing an explicit rollback baseline before the plain-UX release. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 

@@ -20,6 +20,7 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
     readFile(new URL("../data/open-graphics-02.ts", import.meta.url), "utf8"),
   ]);
   assert.match(layout, /Paper Picture — Look at the figure\. Guess the paper\./);
+  assert.match(layout, /google: "78qGk-ze1JLFwz5RwmTtF18NIdzJspt3G1guOlfjQYg"/);
   assert.match(data, /Open Graphics Collection 01/);
   assert.match(data02, /Open Graphics Collection 02/);
   assert.match(page, /Set up your game/);

@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "A quick visual game built from real computer-graphics research. Look at the figures, choose an answer, and discover the paper.",
   keywords: ["computer graphics", "digital geometry", "research papers", "geometry processing", "visual research game"],
   alternates: { canonical: "/" },
+  verification: {
+    google: "78qGk-ze1JLFwz5RwmTtF18NIdzJspt3G1guOlfjQYg",
+  },
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
