@@ -14,7 +14,7 @@ Snapshot date: **14 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 19 · source commit `2639271` |
+| Current Sites version | 21 · source commit `ee85b08` |
 
 The Sites control plane retains saved deployment versions. Production version 16 is also marked by the pushed annotated Git tag `production-v16-2026-07-13`, providing an explicit rollback baseline before the plain-UX release. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
@@ -30,6 +30,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 ## Current product surfaces
 
 - Plain, game-first landing flow: one-sentence purpose, collection choice, guess-type choice, and one primary start action
+- Descriptive search title plus public About, privacy, terms, feedback, robots, and sitemap pages
 - Compact three-step explanation, with research-selection and licensing details available without competing with play
 - Collection picker and six game modes: institution, country, author, venue, year, and topic
 - Progressive reveal, assisted-round classification, scoring, and complete attribution
@@ -41,7 +42,7 @@ Every collection has a maximum score of 600. All 36 shipped figure hashes are re
 - Authenticated feedback/contact form and owner-only inbox with status management and CSV export
 - Owner-only seven-day operational dashboard using aggregate hourly counters
 - Owner-only production backup export with client-side manifest and six-table verification
-- Privacy notice, tester guide, canonical metadata, social preview, security headers, robots file, and sitemap
+- Privacy and terms notices, tester guide, canonical metadata, social preview, security headers, robots file, and sitemap
 
 ## Data model and retention
 
@@ -68,10 +69,13 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 
 - Production version 17 was checked on the custom domain at desktop and 390 × 844: no horizontal overflow, four answer choices, correct-answer reveal, score update, and DOI-specific Paperlog link all passed.
 - The version 17 homepage has a refreshed repository screenshot and a dedicated social preview using the simpler product message.
+- Production version 21 publishes the descriptive search title, About page, Paper Picture-specific terms, and an expanded sitemap containing five public routes.
 - A fresh private production backup was exported from version 16 on 13 July, verified to contain both collection descriptors and all six application tables, and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
 - Production build, lint, TypeScript, whitespace checks, and ten automated release tests pass.
-- Google Search Console ownership is verified for `https://paperpicture.net/` using the deployed HTML meta tag. The submitted sitemap was processed successfully and reported all three public URLs.
+- Google Search Console ownership is verified both for the `https://paperpicture.net/` URL prefix and the domain-wide `paperpicture.net` property using its published DNS TXT record. The expanded sitemap was resubmitted successfully from the domain property after the About and terms pages were added.
+- Google OAuth branding is verified and shown to users. Google also confirms that data-access verification is not required because the app requests no sensitive or restricted scopes.
+- Paper Picture is linked from the live personal demos page, Paperlog footer, GitHub profile README, repository homepage field, and repository description.
 - All 12 shipped DOI links redirect through production Paperlog to the expected canonical paper pages; both redirect and destination return successfully.
 - Google and GitHub production sign-in, callback, profile loading, and sign-out were exercised successfully on `paperpicture.net`.
 - Google and ChatGPT returned the same verified owner email and reached the existing profile. GitHub returned a different verified email and correctly remained a separate private profile.
@@ -100,8 +104,6 @@ Preserve the HMAC secret outside Git: replacing it would disconnect existing pro
 - Retention cleanup is request-driven rather than a scheduled global job.
 - Safari, Firefox, screen-reader, and restore-drill acceptance still require owner-operated checks.
 - Aggregate monitoring is descriptive; it does not yet send alerts.
-- The domain-wide Search Console property still awaits METUnic publication of a Google DNS verification record; the verified URL-prefix property, indexed homepage, and processed sitemap are active.
-- Google authentication works in production, but Google OAuth consent-branding verification has not yet been submitted; Search Console ownership is now available for that process.
 
 ## Handoff rule
 
