@@ -1,6 +1,6 @@
 # Paper Picture project status
 
-Snapshot date: **13 July 2026**
+Snapshot date: **14 July 2026**
 
 ## Production coordinates
 
@@ -14,7 +14,7 @@ Snapshot date: **13 July 2026**
 | Health check | `/api/health` reports collection IDs and public counts only |
 | Search files | `/robots.txt` and `/sitemap.xml` |
 | Canonical host | `https://paperpicture.net` |
-| Current Sites version | 18 · source commit `b5199c0` |
+| Current Sites version | 19 · source commit `2639271` |
 
 The Sites control plane retains saved deployment versions. Production version 16 is also marked by the pushed annotated Git tag `production-v16-2026-07-13`, providing an explicit rollback baseline before the plain-UX release. Source commits in GitHub are the release record for application code; the private D1 backup is deliberately stored outside GitHub.
 
@@ -71,6 +71,7 @@ Player identity is `HMAC-SHA256(PROFILE_ID_SECRET, normalized verified email)`. 
 - A fresh private production backup was exported from version 16 on 13 July, verified to contain both collection descriptors and all six application tables, and stored outside the repository with owner-only filesystem permissions.
 - Existing owner feedback was reviewed; no release-blocking product report was present.
 - Production build, lint, TypeScript, whitespace checks, and ten automated release tests pass.
+- Google Search Console ownership is verified for `https://paperpicture.net/` using the deployed HTML meta tag. The submitted sitemap was processed successfully and reported all three public URLs.
 - All 12 shipped DOI links redirect through production Paperlog to the expected canonical paper pages; both redirect and destination return successfully.
 - Google and GitHub production sign-in, callback, profile loading, and sign-out were exercised successfully on `paperpicture.net`.
 - Google and ChatGPT returned the same verified owner email and reached the existing profile. GitHub returned a different verified email and correctly remained a separate private profile.
@@ -99,7 +100,7 @@ Preserve the HMAC secret outside Git: replacing it would disconnect existing pro
 - Retention cleanup is request-driven rather than a scheduled global job.
 - Safari, Firefox, screen-reader, and restore-drill acceptance still require owner-operated checks.
 - Aggregate monitoring is descriptive; it does not yet send alerts.
-- Google authentication works in production, but Google consent-branding verification remains pending; until verification, Google may display the domain rather than the Paper Picture brand name.
+- Google authentication works in production, but Google OAuth consent-branding verification has not yet been submitted; Search Console ownership is now available for that process.
 
 ## Handoff rule
 

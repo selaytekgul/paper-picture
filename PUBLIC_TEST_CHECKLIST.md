@@ -54,10 +54,11 @@
 
 - [x] Canonical URL, crawlable robots file, and sitemap are public.
 - [x] Paper Picture favicon, Apple touch icon, manifest icons, descriptive metadata, and WebSite structured data are deployed.
-- [ ] Add `paperpicture.net` as a Google Search Console domain property.
-- [ ] Submit `https://paperpicture.net/sitemap.xml` in Search Console.
+- [x] Add `https://paperpicture.net/` as a verified Google Search Console URL-prefix property.
+- [ ] Complete the `paperpicture.net` domain property after the registrar TXT record becomes publicly visible.
+- [x] Submit `https://paperpicture.net/sitemap.xml` in Search Console; Google processed it successfully and discovered all three public URLs.
 - [ ] Inspect `https://paperpicture.net/` and request indexing once after verification.
-- [ ] Complete Google OAuth consent-branding verification after domain ownership is available in Search Console.
+- [ ] Submit Google OAuth consent-branding verification now that Search Console ownership is available.
 
 ## Friend pilot brief
 
