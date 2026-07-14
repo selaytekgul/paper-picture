@@ -35,6 +35,7 @@ test("homepage keeps Collection 01 frozen and exposes Collection 02 plus six gam
   assert.match(page, /CC BY 4\.0/);
   assert.match(page, /href="\/profile"/);
   assert.match(page, /href="\/privacy"/);
+  assert.match(page, /href="\/terms"/);
   assert.match(page, /href="\/about"/);
   assert.match(about, /Why Paper Picture exists/);
   assert.match(about, /paperlog\.net/);
@@ -315,7 +316,9 @@ test("search metadata and Paper Picture favicon assets are complete", async () =
   assert.match(robots, /sitemap: "https:\/\/paperpicture\.net\/sitemap\.xml"/);
   assert.doesNotMatch(robots, /host:/);
   assert.match(robots, /"\/about"/);
+  assert.match(robots, /"\/terms"/);
   assert.match(sitemap, /"\/about"/);
+  assert.match(sitemap, /"\/terms"/);
   assert.match(sitemap, /2026-07-14/);
   await Promise.all([
     "favicon.ico",

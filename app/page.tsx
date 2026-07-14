@@ -201,7 +201,7 @@ export default function Home() {
           <ol><li><b>1</b><span>Study one research figure.</span></li><li><b>2</b><span>Choose from four answers.</span></li><li><b>3</b><span>See the paper and its source.</span></li></ol>
         </section>
         <p className="trust-note">Every clue comes from a real, openly licensed paper. Sources and credits are shown after each answer. <a href="/test-guide">See how papers are selected.</a></p>
-        <footer className="landing-footer"><span>{totalStats.papers} real papers · {totalStats.figures} figures · CC BY 4.0</span><span><a href="/about">About</a><a href="/feedback">Feedback</a><a href="/privacy">Privacy</a><a href="https://github.com/selaytekgul/paper-picture" target="_blank" rel="noreferrer">GitHub</a></span></footer>
+        <footer className="landing-footer"><span>{totalStats.papers} real papers · {totalStats.figures} figures · CC BY 4.0</span><span><a href="/about">About</a><a href="/feedback">Feedback</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://github.com/selaytekgul/paper-picture" target="_blank" rel="noreferrer">GitHub</a></span></footer>
       </main>
     );
   }
